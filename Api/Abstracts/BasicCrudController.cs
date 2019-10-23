@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ namespace API.Abstracts
         [HttpGet]
         [Route("{id}")]
         [SwaggerOperation("Get")]
-        public async Task<IActionResult> Get([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             return Ok(await BasicCrudLogic().Get(id));
         }
@@ -31,7 +32,7 @@ namespace API.Abstracts
         [HttpPut]
         [Route("{id}")]
         [SwaggerOperation("Update")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] T instance)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] T instance)
         {
             return Ok(await BasicCrudLogic().Update(id, instance));
         }
@@ -39,7 +40,7 @@ namespace API.Abstracts
         [HttpDelete]
         [Route("{id}")]
         [SwaggerOperation("Delete")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             return Ok(await BasicCrudLogic().Delete(id));
         }

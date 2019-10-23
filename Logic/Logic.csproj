@@ -3,9 +3,6 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DAL\DAL.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="HashLib" Version="2.0.1" />
+    <ProjectReference Include="..\Dal\Dal.csproj" />
   </ItemGroup>
 </Project>

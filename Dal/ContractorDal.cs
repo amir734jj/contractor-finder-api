@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DAL.Abstracts;
 using DAL.Interfaces;
@@ -9,7 +9,7 @@ using Models.Entities;
 
 namespace DAL
 {
-    public class HostDal : BasicCrudDalAbstract<Host>, IHostDal
+    public class ContractorDal : BasicCrudDalAbstract<Contractor>, IContractorDal
     {
         private readonly EntityDbContext _dbContext;
         
@@ -17,7 +17,7 @@ namespace DAL
         /// Constructor dependency injection
         /// </summary>
         /// <param name="dbContext"></param>
-        public HostDal(EntityDbContext dbContext)
+        public ContractorDal(EntityDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -32,12 +32,12 @@ namespace DAL
         }
 
         /// <summary>
-        /// Returns hosts entity
+        /// Returns students entity
         /// </summary>
         /// <returns></returns>
-        protected override DbSet<Host> GetDbSet()
+        protected override DbSet<Contractor> GetDbSet()
         {
-            return _dbContext.Hosts;
+            return _dbContext.Contractors;
         }
 
         /// <summary>
@@ -45,11 +45,10 @@ namespace DAL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public override async Task<Host> Get(int id)
+        public override async Task<Contractor> Get(Guid id)
         {
             return await GetDbSet()
-                .Include(x => x.Drivers)
-                .ThenInclude(x => x.Students)
+                .Include(x => x.ProfilePhoto)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -57,25 +56,11 @@ namespace DAL
         /// Override to include related entity
         /// </summary>
         /// <returns></returns>
-        public override async Task<IEnumerable<Host>> GetAll()
+        public override async Task<IEnumerable<Contractor>> GetAll()
         {
             return await GetDbSet()
-                .Include(x => x.Drivers)
-                .ThenInclude(x => x.Students)
-                .OrderBy(x => x.Fullname)
+                .Include(x => x.ProfilePhoto)
                 .ToListAsync();
-        }
-
-        public override async Task<Host> Update(int id, Host dto)
-        {
-            var entity = await Get(id);
-
-            entity.Fullname = dto.Fullname;
-            entity.Email = dto.Email;
-            entity.Phone = dto.Phone;
-            entity.Address = dto.Address;
-            
-            return await base.Update(id, entity);
         }
     }
 }

@@ -2,8 +2,7 @@
 
 namespace Logic.Interfaces
 {
-    public interface IDriverLogic : IBasicCrudLogic<Driver>
+    public interface IContractorLogic : IBasicCrudLogic<Contractor>
     {
-        
     }
 }

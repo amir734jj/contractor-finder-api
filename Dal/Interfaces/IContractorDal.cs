@@ -2,7 +2,7 @@
 
 namespace DAL.Interfaces
 {
-    public interface IUserDal : IBasicCrudDal<User>
+    public interface IContractorDal : IBasicCrudDal<Contractor>
     {
         
     }

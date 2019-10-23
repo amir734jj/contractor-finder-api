@@ -1,11 +1,19 @@
-﻿namespace Models.Interfaces
+using Microsoft.AspNetCore.Identity;
+
+namespace Models.Interfaces
 {
-    public interface IPerson : IBasicModel
+    public interface IPerson : IEntity
     {
+        [ProtectedPersonalData]
         string Email { get; set; }
         
-        string Phone { get; set; }
+        [ProtectedPersonalData]
+        string PhoneNumber { get; set; }
         
-        string Fullname { get; set; }
+        [ProtectedPersonalData]
+        string Firstname { get; set; }
+        
+        [ProtectedPersonalData]
+        string Lastname { get; set; }
     }
 }

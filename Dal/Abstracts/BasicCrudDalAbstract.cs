@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AgileObjects.AgileMapper;
 using DAL.Extensions;
 using DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Models.Interfaces;
 
 namespace DAL.Abstracts
 {
-    public abstract class BasicCrudDalAbstract<T> : IBasicCrudDal<T> where T : class, IBasicModel
+    public abstract class BasicCrudDalAbstract<T> : IBasicCrudDal<T> where T : class, IEntity
     {   
         /// <summary>
         /// Abstract to get database context
@@ -37,7 +38,7 @@ namespace DAL.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<T> Get(int id)
+        public virtual async Task<T> Get(Guid id)
         {
             return await GetDbSet().FirstOrDefaultCacheAsync(x => x.Id == id);
         }
@@ -61,7 +62,7 @@ namespace DAL.Abstracts
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual async Task<T> Delete(int id)
+        public virtual async Task<T> Delete(Guid id)
         {
             var entity = GetDbSet().FirstOrDefault(x => x.Id == id);
 
@@ -85,15 +86,17 @@ namespace DAL.Abstracts
         /// Handles update
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="entity"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
-        public virtual async Task<T> Update(int id, T entity)
+        public virtual async Task<T> Update(Guid id, T dto)
         {
+            var entity = await Get(id);
+            
             if (entity != null)
             {
-                // Update
-                GetDbSet().Update(entity);
-                
+                // Update fields
+                Mapper.Map(dto).Over(entity);
+
                 // Save and dispose
                 await GetDbContext().SaveChangesAsync();
 
@@ -111,7 +114,7 @@ namespace DAL.Abstracts
         /// <param name="id"></param>
         /// <param name="modifyAction"></param>
         /// <returns></returns>
-        public virtual async Task<T> Update(int id, Action<T> modifyAction)
+        public virtual async Task<T> Update(Guid id, Action<T> modifyAction)
         {            
             var entity = await GetDbSet().FirstOrDefaultCacheAsync(x => x.Id == id);
                 
