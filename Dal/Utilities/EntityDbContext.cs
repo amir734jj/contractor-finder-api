@@ -1,20 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Models.Entities;
-using DbContext = Microsoft.EntityFrameworkCore.DbContext;
 
 namespace DAL.Utilities
 {
-    public sealed class EntityDbContext: DbContext
+    public sealed class EntityDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
-        public DbSet<Student> Students { get; set; }
-        
-        public DbSet<User> Users { get; set; }
-        
-        public DbSet<Driver> Drivers { get; set; }
-        
-        public DbSet<Host> Hosts { get; set; }
-        
-        public DbSet<Event> Events { get; set; }
+        public DbSet<Contractor> Contractors { get; set; }
 
         /// <inheritdoc />
         /// <summary>
@@ -29,18 +23,10 @@ namespace DAL.Utilities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EventStudentRelationship>()
-                .HasKey(t => new { t.StudentId, t.EventId });
-
-            modelBuilder.Entity<EventStudentRelationship>()
-                .HasOne(pt => pt.Event)
-                .WithMany(p => p.Students)
-                .HasForeignKey(pt => pt.StudentId);
-
-            modelBuilder.Entity<EventStudentRelationship>()
-                .HasOne(pt => pt.Event)
-                .WithMany(t => t.Students)
-                .HasForeignKey(pt => pt.EventId);
+            modelBuilder.Entity<Contractor>()
+                .HasOne(x => x.ProfilePhoto)
+                .WithOne(x => x.Owner)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

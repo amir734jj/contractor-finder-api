@@ -1,27 +1,26 @@
 using System;
+using System.Text;
+using API.Configs;
 using API.Extensions;
-using DAL.Interfaces;
-using DAL.ServiceApi;
 using DAL.Utilities;
-using Logic.Interfaces;
-using Mailjet.Client;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Models.Constants;
-using NETCore.MailKit.Extensions;
-using NETCore.MailKit.Infrastructure.Internal;
+using Models.Entities;
 using OwaspHeaders.Core.Extensions;
 using OwaspHeaders.Core.Models;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
-using WebMarkupMin.AspNetCore2;
 using static API.Utilities.ConnectionStringUtility;
 
 namespace API
@@ -31,8 +30,6 @@ namespace API
         private readonly IConfigurationRoot _configuration;
 
         private readonly IWebHostEnvironment _env;
-
-        private IContainer _container;
 
         public Startup(IWebHostEnvironment env)
         {
@@ -64,30 +61,6 @@ namespace API
             services.Configure<SecureHeadersMiddlewareConfiguration>(_configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
             
             services.AddLogging();
-            
-            // Add MailKit
-            services.AddMailKit(optionBuilder =>
-            {
-                var emailSection = _configuration.GetSection("Email");
-
-                var mailKitOptions = new MailKitOptions
-                {
-                    // Get options from secrets.json
-                    Server = emailSection.GetValue<string>("Server"),
-                    Port = emailSection.GetValue<int>("Port"),
-                    SenderName = emailSection.GetValue<string>("SenderName"),
-                    SenderEmail = emailSection.GetValue<string>("SenderEmail"),
-
-                    // Can be optional with no authentication 
-                    Account = emailSection.GetValue<string>("Account"),
-                    Password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD"),
-
-                    // Enable ssl or tls
-                    Security = true
-                };
-
-                optionBuilder.UseMailKit(mailKitOptions);
-            });
 
             services.AddRouting(options => { options.LowercaseUrls = true; });
 
@@ -98,7 +71,7 @@ namespace API
                 // Set a short timeout for easy testing.
                 options.IdleTimeout = TimeSpan.FromMinutes(50);
                 options.Cookie.HttpOnly = true;
-                options.Cookie.Name = ApiConstants.AuthenticationSessionCookieName;
+                options.Cookie.Name = ApiConstants.ApplicationName;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             });
 
@@ -124,14 +97,6 @@ namespace API
             {
                 x.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
             });
-            
-            services.AddWebMarkupMin(opt =>
-                {
-                    opt.AllowMinificationInDevelopmentEnvironment = true;
-                    opt.AllowCompressionInDevelopmentEnvironment = true;
-                })
-                .AddHtmlMinification()
-                .AddHttpCompression();
 
             services.AddDbContext<EntityDbContext>(builder =>
             {
@@ -147,42 +112,53 @@ namespace API
                 }
             });
             
-            _container = new Container(config =>
+            services.AddIdentity<User, IdentityRole<Guid>>(x => x.User.RequireUniqueEmail = true)
+                .AddEntityFrameworkStores<EntityDbContext>()
+                .AddRoles<IdentityRole<Guid>>()
+                .AddDefaultTokenProviders();
+
+            var jwtSetting = new JwtSettings();
+
+            var jwtConfigSection = _configuration.GetSection("JwtSettings");
+
+            // Populate the JwtSettings object
+            jwtConfigSection.Bind(jwtSetting);
+
+            services.Configure<JwtSettings>(jwtConfigSection);
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(x => x.Cookie.MaxAge = TimeSpan.FromMinutes(60))
+                .AddJwtBearer(config =>
+                {
+                    config.RequireHttpsMetadata = false;
+                    config.SaveToken = true;
+
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtSetting.Issuer,
+                        ValidAudience = jwtSetting.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key))
+                    };
+                });
+            
+            var container = new Container(config =>
             {
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>
                 {
                     _.AssemblyContainingType(typeof(Startup));
                     _.Assembly("Logic");
-                    _.Assembly("DAL");
+                    _.Assembly("Dal");
                     _.WithDefaultConventions();
                 });
-                
-                // If environment is localhost then use mock email service
-                if (_env.IsDevelopment())
-                {
-                    config.For<IEmailServiceApi>().Use(new EmailServiceApi()).Singleton();
-                }
-                
-                // It has to be a singleton
-                config.For<IIdentityDictionary>().Singleton();
 
-                // Singleton to handle identities
-                config.For<IIdentityLogic>().Singleton();
-
-                // Initialize the email jet client
-                config.For<IMailjetClient>().Use(new MailjetClient(
-                    Environment.GetEnvironmentVariable("MAIL_JET_KEY"),
-                    Environment.GetEnvironmentVariable("MAIL_JET_SECRET"))
-                ).Singleton();
-                
                 // Populate the container using the service collection
                 config.Populate(services);
             });
 
-            _container.AssertConfigurationIsValid();
+            container.AssertConfigurationIsValid();
 
-            return _container.GetInstance<IServiceProvider>();
+            return container.GetInstance<IServiceProvider>();
         }
 
         /// <summary>
@@ -200,6 +176,8 @@ namespace API
 
             app.UseDeveloperExceptionPage();
             
+            app.UseAuthentication();
+            
             if (_env.IsDevelopment())
             {
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -209,11 +187,7 @@ namespace API
                 // specifying the Swagger JSON endpoint.
                 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
             }
-            else
-            {
-                app.UseWebMarkupMin();
-            }
- 
+
             // Use wwwroot folder as default static path
             app.UseDefaultFiles();
             
