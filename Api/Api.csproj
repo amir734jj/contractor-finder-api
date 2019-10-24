@@ -2,19 +2,23 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Flurl" Version="2.8.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="OwaspHeaders.Core" Version="3.5.2" />
     <PackageReference Include="StructureMap" Version="4.7.1" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.0.0-rc4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers" />
     <Folder Include="wwwroot" />
   </ItemGroup>
 </Project>

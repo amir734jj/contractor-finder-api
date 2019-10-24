@@ -25,6 +25,8 @@ namespace Models.Entities
     [Table("ProfilePhotos")]
     public class ContractorProfilePhoto : AbstractFileEntity
     {
-        public Contractor Owner { get; set; }
+        public Guid ContractorId { get; set; }
+        
+        public Contractor Contractor { get; set; }
     }
 }

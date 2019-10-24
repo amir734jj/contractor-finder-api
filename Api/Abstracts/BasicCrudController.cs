@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace API.Abstracts
@@ -12,6 +13,10 @@ namespace API.Abstracts
         [NonAction]
         protected abstract IBasicCrudLogic<T> BasicCrudLogic();
 
+        /// <summary>
+        /// GetAll items
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("")]
         [SwaggerOperation("GetAll")]
@@ -21,6 +26,11 @@ namespace API.Abstracts
             return Ok(await BasicCrudLogic().GetAll());
         }
 
+        /// <summary>
+        /// Get by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         [SwaggerOperation("Get")]
@@ -29,6 +39,12 @@ namespace API.Abstracts
             return Ok(await BasicCrudLogic().Get(id));
         }
 
+        /// <summary>
+        /// Update by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="instance"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("{id}")]
         [SwaggerOperation("Update")]
@@ -37,6 +53,11 @@ namespace API.Abstracts
             return Ok(await BasicCrudLogic().Update(id, instance));
         }
 
+        /// <summary>
+        /// Delete by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [SwaggerOperation("Delete")]
@@ -45,6 +66,11 @@ namespace API.Abstracts
             return Ok(await BasicCrudLogic().Delete(id));
         }
         
+        /// <summary>
+        /// Save item
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("")]
         [SwaggerOperation("Save")]

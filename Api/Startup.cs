@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using API.Configs;
 using API.Extensions;
@@ -15,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Models.Constants;
 using Models.Entities;
 using OwaspHeaders.Core.Extensions;
@@ -58,8 +61,9 @@ namespace API
             services.AddOptions();
 
             // Add our Config object so it can be injected
-            services.Configure<SecureHeadersMiddlewareConfiguration>(_configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
-            
+            services.Configure<SecureHeadersMiddlewareConfiguration>(
+                _configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
+
             services.AddLogging();
 
             services.AddRouting(options => { options.LowercaseUrls = true; });
@@ -77,26 +81,31 @@ namespace API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "Milwaukee-Internationals-API", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Contractor-Finder-Api"});
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddMvc(x =>
-            {
-                x.ModelValidatorProviders.Clear();
-
-                // Not need to have https
-                x.RequireHttpsPermanent = false;
-
-                // Allow anonymous for localhost
-                if (_env.IsDevelopment())
+            services.AddControllers(opt =>
                 {
-                    x.Filters.Add<AllowAnonymousFilter>();
-                }
+                    opt.EnableEndpointRouting = false;
 
-            }).AddJsonOptions(x => { }).AddRazorPagesOptions(x =>
-            {
-                x.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
-            });
+                    opt.ModelValidatorProviders.Clear();
+
+                    // Not need to have https
+                    opt.RequireHttpsPermanent = false;
+
+                    // Allow anonymous for localhost
+                    if (_env.IsDevelopment())
+                    {
+                        opt.Filters.Add<AllowAnonymousFilter>();
+                    }
+                }).AddJsonOptions(x => { })
+                .AddRazorPagesOptions(x => x.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()))
+                .AddNewtonsoftJson();
 
             services.AddDbContext<EntityDbContext>(builder =>
             {
@@ -111,7 +120,7 @@ namespace API
                         ?? throw new Exception("DATABASE_URL is null"));
                 }
             });
-            
+
             services.AddIdentity<User, IdentityRole<Guid>>(x => x.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddRoles<IdentityRole<Guid>>()
@@ -140,7 +149,7 @@ namespace API
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key))
                     };
                 });
-            
+
             var container = new Container(config =>
             {
                 // Register stuff in container, using the StructureMap APIs...
@@ -169,15 +178,15 @@ namespace API
         {
             // Add SecureHeadersMiddleware to the pipeline
             app.UseSecureHeadersMiddleware(_configuration.Get<SecureHeadersMiddlewareConfiguration>());
-            
+
             app.UseEnableRequestRewind();
 
             app.UseDatabaseErrorPage();
 
             app.UseDeveloperExceptionPage();
-            
+
             app.UseAuthentication();
-            
+
             if (_env.IsDevelopment())
             {
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -190,17 +199,19 @@ namespace API
 
             // Use wwwroot folder as default static path
             app.UseDefaultFiles();
-            
+
             // Serve static files
             app.UseStaticFiles();
 
             app.UseCookiePolicy();
-            
-            app.UseSession();
-            
-            app.UseMvc(routes => { routes.MapRoute("default", "{controller=Home}/{action=Index}"); });
 
-            Console.WriteLine("Application Started!");            
+            app.UseSession();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
+
+            Console.WriteLine("Application Started!");
         }
     }
 }
