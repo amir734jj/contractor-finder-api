@@ -25,7 +25,8 @@ namespace DAL.Utilities
         {
             modelBuilder.Entity<Contractor>()
                 .HasOne(x => x.ProfilePhoto)
-                .WithOne(x => x.Owner)
+                .WithOne(x => x.Contractor)
+                .HasForeignKey<ContractorProfilePhoto>(x => x.ContractorId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
