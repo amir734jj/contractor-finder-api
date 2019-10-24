@@ -14,40 +14,6 @@
     <ProjectReference Include="..\Logic\Logic.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Utility\AdHocEmail.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Utility\EmailCheckIn.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Host\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Host\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Event\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Event\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Event\Info.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Identity\Login.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Identity\NotAuthenticated.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Identity\NotAuthorized.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Identity\Register.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Attendance\Driver.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Attendance\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Attendance\Student.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Config\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Places\Place.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Driver\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Driver\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Mapping\DriverHostMapping.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Mapping\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Mapping\StudentDriverMapping.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Registration\Driver.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Registration\Event.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Registration\Host.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Registration\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Registration\Student.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Registration\Thankyou.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\User\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Student\Edit.cshtml" />
-    <_ContentIncludedByDefault Remove="Views\Student\Index.cshtml" />
-    <_ContentIncludedByDefault Remove="wwwroot\images\tour-header.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Controllers" />
     <Folder Include="wwwroot" />
   </ItemGroup>
