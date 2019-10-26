@@ -56,6 +56,15 @@ namespace API
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            // If environment is localhost, then enable CORS policy, otherwise no cross-origin access
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             // Add framework services
             // Add functionality to inject IOptions<T>
             services.AddOptions();
@@ -178,6 +187,8 @@ namespace API
         {
             // Add SecureHeadersMiddleware to the pipeline
             app.UseSecureHeadersMiddleware(_configuration.Get<SecureHeadersMiddlewareConfiguration>());
+
+            app.UseCors("CorsPolicy");
 
             app.UseEnableRequestRewind();
 
