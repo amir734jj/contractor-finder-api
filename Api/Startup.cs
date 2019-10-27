@@ -60,8 +60,7 @@ namespace Api
             {
                 options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowAnyHeader());
             });
 
             // Add framework services
@@ -131,7 +130,7 @@ namespace Api
 
             services.AddIdentity<User, UserRole>(x => x.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<EntityDbContext>()
-                .AddRoles<IdentityRole<Guid>>()
+                .AddRoles<UserRole>()
                 .AddDefaultTokenProviders();
 
             var jwtSetting = new JwtSettings();
@@ -187,18 +186,16 @@ namespace Api
             // Add SecureHeadersMiddleware to the pipeline
             app.UseSecureHeadersMiddleware(_configuration.Get<SecureHeadersMiddlewareConfiguration>());
 
-            app.UseCors("CorsPolicy");
-
-            app.UseEnableRequestRewind();
-
-            app.UseDatabaseErrorPage();
-
-            app.UseDeveloperExceptionPage();
-
-            app.UseAuthentication();
+            app.UseCors("CorsPolicy")
+                .UseEnableRequestRewind()
+                .UseDeveloperExceptionPage()
+                .UseAuthentication()
+                .UseAuthorization();
 
             if (_env.IsDevelopment())
             {
+                app.UseDatabaseErrorPage();
+
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
 
@@ -208,18 +205,12 @@ namespace Api
             }
 
             // Use wwwroot folder as default static path
-            app.UseDefaultFiles();
-
-            // Serve static files
-            app.UseStaticFiles();
-
-            app.UseCookiePolicy();
-
-            app.UseSession();
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints => endpoints.MapControllers());
+            app.UseDefaultFiles()
+                .UseStaticFiles()
+                .UseCookiePolicy()
+                .UseSession()
+                .UseRouting()
+                .UseEndpoints(endpoints => endpoints.MapControllers());
 
             Console.WriteLine("Application Started!");
         }

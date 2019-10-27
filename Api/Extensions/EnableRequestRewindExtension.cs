@@ -5,9 +5,11 @@ namespace Api.Extensions
 {
     public static class EnableRequestRewindExtension
     {
-        public static void UseEnableRequestRewind(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseEnableRequestRewind(this IApplicationBuilder builder)
         {
             builder.UseMiddleware<EnableRequestRewindMiddleware>();
+
+            return builder;
         }
     }
 }
