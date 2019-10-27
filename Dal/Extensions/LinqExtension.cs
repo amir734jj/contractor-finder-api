@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DAL.Extensions
+namespace Dal.Extensions
 {
     public static class LinqExtension
     {

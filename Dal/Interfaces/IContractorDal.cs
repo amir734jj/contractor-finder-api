@@ -1,6 +1,6 @@
-﻿using Models.Entities;
+﻿using Models.Entities.ContractorEntities;
 
-namespace DAL.Interfaces
+namespace Dal.Interfaces
 {
     public interface IContractorDal : IBasicCrudDal<Contractor>
     {

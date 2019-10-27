@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace API.Middlewares
+namespace Api.Middlewares
 {
     public class EnableRequestRewindMiddleware
     {

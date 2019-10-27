@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DAL.Interfaces;
+using Dal.Interfaces;
 using Logic.Interfaces;
 
 namespace Logic.Abstracts

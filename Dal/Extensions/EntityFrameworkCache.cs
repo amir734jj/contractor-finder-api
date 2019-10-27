@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Extensions
+namespace Dal.Extensions
 {
     public static class EntityFrameworkCache
     {

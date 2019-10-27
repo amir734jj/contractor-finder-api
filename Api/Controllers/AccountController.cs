@@ -3,12 +3,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using API.Configs;
+using Api.Configs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Models.Entities;
+using Models.Entities.UserEntities;
 using Models.ViewModels;
 using Swashbuckle.AspNetCore.Annotations;
 

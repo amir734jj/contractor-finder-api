@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using API.Configs;
-using API.Extensions;
-using DAL.Utilities;
+using Api.Configs;
+using Api.Extensions;
+using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,14 +19,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Constants;
-using Models.Entities;
+using Models.Entities.UserEntities;
 using OwaspHeaders.Core.Extensions;
 using OwaspHeaders.Core.Models;
 using StructureMap;
-using Swashbuckle.AspNetCore.Swagger;
-using static API.Utilities.ConnectionStringUtility;
+using static Api.Utilities.ConnectionStringUtility;
 
-namespace API
+namespace Api
 {
     public class Startup
     {
@@ -130,7 +129,7 @@ namespace API
                 }
             });
 
-            services.AddIdentity<User, IdentityRole<Guid>>(x => x.User.RequireUniqueEmail = true)
+            services.AddIdentity<User, UserRole>(x => x.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddRoles<IdentityRole<Guid>>()
                 .AddDefaultTokenProviders();

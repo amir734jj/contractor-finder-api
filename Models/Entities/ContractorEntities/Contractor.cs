@@ -1,10 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Models.Abstracts;
 using Models.Interfaces;
 
-namespace Models.Entities
+namespace Models.Entities.ContractorEntities
 {
     public class Contractor : IPerson
     {
@@ -20,13 +18,5 @@ namespace Models.Entities
         public string Lastname { get; set; }
 
         public ContractorProfilePhoto ProfilePhoto { get; set; }
-    }
-
-    [Table("ProfilePhotos")]
-    public class ContractorProfilePhoto : AbstractFileEntity
-    {
-        public Guid ContractorId { get; set; }
-        
-        public Contractor Contractor { get; set; }
     }
 }

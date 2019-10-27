@@ -1,7 +1,7 @@
-using API.Middlewares;
+using Api.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
-namespace API.Extensions
+namespace Api.Extensions
 {
     public static class EnableRequestRewindExtension
     {
