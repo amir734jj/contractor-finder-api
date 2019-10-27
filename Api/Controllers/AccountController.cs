@@ -62,8 +62,8 @@ namespace Api.Controllers
             };
             
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
-            
-            return result.Succeeded ? (IActionResult) Ok("Successfully registered!") : BadRequest("Failed to register!");
+
+            return result.Succeeded ? (IActionResult) Ok(new { user.Email, user.UserName }) : BadRequest("Failed to register!");
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -112,7 +112,7 @@ namespace Api.Controllers
                 signingCredentials: credentials);
 
             var token = new JwtSecurityTokenHandler().WriteToken(tokenObject);
-            var email = (await _userManager.FindByEmailAsync(User.Identity.Name)).Email;
+            var email = user.Email;
 
             return Ok(new { token, email });
         }

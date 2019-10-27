@@ -7,7 +7,7 @@ using Models.Entities.UserEntities;
 
 namespace Dal.Utilities
 {
-    public sealed class EntityDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
+    public sealed class EntityDbContext: IdentityDbContext<User, UserRole, Guid>
     {
         public DbSet<Contractor> Contractors { get; set; }
 
