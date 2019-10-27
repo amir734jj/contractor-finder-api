@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DAL.Abstracts;
-using DAL.Interfaces;
-using DAL.Utilities;
+using Dal.Abstracts;
+using Dal.Interfaces;
+using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities;
+using Models.Entities.ContractorEntities;
 
-namespace DAL
+namespace Dal
 {
     public class ContractorDal : BasicCrudDalAbstract<Contractor>, IContractorDal
     {

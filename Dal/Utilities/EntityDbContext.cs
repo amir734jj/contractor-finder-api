@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities;
+using Models.Entities.ContractorEntities;
+using Models.Entities.UserEntities;
 
-namespace DAL.Utilities
+namespace Dal.Utilities
 {
     public sealed class EntityDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {

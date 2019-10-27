@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AgileObjects.AgileMapper;
-using DAL.Extensions;
-using DAL.Interfaces;
+using Dal.Extensions;
+using Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Models.Interfaces;
 
-namespace DAL.Abstracts
+namespace Dal.Abstracts
 {
     public abstract class BasicCrudDalAbstract<T> : IBasicCrudDal<T> where T : class, IEntity
     {   

@@ -2,7 +2,7 @@ using System;
 using Microsoft.AspNetCore.Identity;
 using Models.Interfaces;
 
-namespace Models.Entities
+namespace Models.Entities.UserEntities
 {
     public class User : IdentityUser<Guid>, IPerson
     {

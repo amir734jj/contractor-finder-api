@@ -1,7 +1,7 @@
 ﻿using System;
 using Npgsql;
 
-namespace API.Utilities
+namespace Api.Utilities
 {
     public static class ConnectionStringUtility
     {
