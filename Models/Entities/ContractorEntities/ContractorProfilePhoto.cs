@@ -8,7 +8,7 @@ namespace Models.Entities.ContractorEntities
     public class ContractorProfilePhoto : AbstractFileEntity
     {
         public Guid ContractorId { get; set; }
-        
+
         public Contractor Contractor { get; set; }
     }
 }
