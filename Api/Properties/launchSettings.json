@@ -5,10 +5,7 @@
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "MAIL_JET_KEY": "",
-        "MAIL_JET_SECRET": "",
-        "EMAIL_PASSWORD": ""
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }
