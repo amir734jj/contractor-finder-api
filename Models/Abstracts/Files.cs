@@ -13,6 +13,6 @@ namespace Models.Abstracts
         
         public string MimeType { get; set; }
 
-        public byte[] Data { get; set; }
+        public byte[] Bytes { get; set; }
     }
 }
