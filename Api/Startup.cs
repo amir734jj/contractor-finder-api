@@ -58,7 +58,8 @@ namespace Api
             // If environment is localhost, then enable CORS policy, otherwise no cross-origin access
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
+                options.AddPolicy("CorsPolicy", builder => builder
+                    .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             });
