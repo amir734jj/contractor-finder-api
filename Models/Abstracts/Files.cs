@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Models.Interfaces;
 
 namespace Models.Abstracts
@@ -13,6 +14,8 @@ namespace Models.Abstracts
         
         public string MimeType { get; set; }
 
-        public byte[] Bytes { get; set; }
+        [Column(TypeName = "text")]
+        [MaxLength] 
+        public string Base64 { get; set; }
     }
 }
