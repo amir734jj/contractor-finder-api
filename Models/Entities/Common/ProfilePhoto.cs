@@ -1,4 +1,3 @@
-using System;
 using Models.Abstracts;
 
 namespace Models.Entities.Common

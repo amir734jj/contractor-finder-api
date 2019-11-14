@@ -1,15 +1,7 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Models.Abstracts;
-using Models.Entities;
-using Models.Entities.Common;
+﻿using Microsoft.EntityFrameworkCore;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 using Models.Entities.Internals;
-using Models.Entities.Projects;
-using Models.Entities.Users;
 
 namespace Dal.Utilities
 {

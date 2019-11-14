@@ -1,7 +1,6 @@
 ﻿using Dal.Interfaces;
 using Logic.Abstracts;
 using Logic.Interfaces;
-using Models.Entities;
 using Models.Entities.Contractors;
 
 namespace Logic
