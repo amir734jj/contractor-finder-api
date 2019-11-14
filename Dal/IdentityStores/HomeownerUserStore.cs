@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Models.Entities.Homeowners;
 using Models.Entities.Users;
 
-namespace Dal
+namespace Dal.IdentityStores
 {
     public class HomeownerUserStore : AbstractUserStore<Homeowner, UserRole, Guid>
     {

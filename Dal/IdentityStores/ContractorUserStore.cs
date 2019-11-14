@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Models.Entities.Contractors;
 using Models.Entities.Users;
 
-namespace Dal
+namespace Dal.IdentityStores
 {
     public class ContractorUserStore : AbstractUserStore<Contractor, UserRole, Guid>
     {

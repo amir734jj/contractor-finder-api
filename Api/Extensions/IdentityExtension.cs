@@ -17,9 +17,7 @@ namespace Api.Extensions
             // where TRoleStore : class, IRoleStore<TRole>
         {
             services
-                .AddIdentityCore<User>()
-                .AddEntityFrameworkStores<EntityDbContext>()
-                .AddRoles<TRole>()
+                .AddIdentity<User, TRole>()
                 .AddUserStore<TUserStore>()
                 // .AddRoleStore<TRoleStore>()
                 .AddDefaultTokenProviders();

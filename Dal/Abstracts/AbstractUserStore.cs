@@ -11,7 +11,7 @@ namespace Dal.Abstracts
         where TRole : IdentityRole<TKey>
         where TKey : IEquatable<TKey>
     {
-        public AbstractUserStore(EntityDbContext context, IdentityErrorDescriber describer = null) : base(context, describer)
+        protected AbstractUserStore(EntityDbContext context, IdentityErrorDescriber describer = null) : base(context, describer)
         {
             
         }
