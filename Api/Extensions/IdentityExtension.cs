@@ -1,6 +1,3 @@
-using System;
-using Dal.Abstracts;
-using Dal.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Models.Entities.Users;

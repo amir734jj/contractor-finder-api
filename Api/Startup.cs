@@ -5,9 +5,7 @@ using System.Text;
 using Api.Configs;
 using Api.Controllers;
 using Api.Extensions;
-using Api.Utilities;
 using Castle.DynamicProxy;
-using Dal;
 using Dal.IdentityStores;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -23,7 +21,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Models.Abstracts;
 using Models.Constants;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
@@ -99,6 +96,8 @@ namespace Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Contractor-Finder-Api"});
+                
+                c.DescribeAllEnumsAsStrings();
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -106,7 +105,8 @@ namespace Api
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddControllers(opt =>
+            services
+                .AddControllers(opt =>
                 {
                     opt.EnableEndpointRouting = false;
 
@@ -120,7 +120,8 @@ namespace Api
                     {
                         opt.Filters.Add<AllowAnonymousFilter>();
                     }
-                }).AddJsonOptions(x => { })
+                })
+                .AddNewtonsoftJson()
                 .AddRazorPagesOptions(x => x.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()))
                 .AddNewtonsoftJson();
 

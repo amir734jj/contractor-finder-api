@@ -41,14 +41,6 @@ namespace Api.Controllers
                 : Ok(new { });
         }
 
-        [HttpGet]
-        [Route("Register")]
-        [SwaggerOperation("Register")]
-        public async Task<IActionResult> RegisterIndex()
-        {
-            return Ok("Please log-in by posting to this route!");
-        }
-
         [HttpPost]
         [Route("Register/{role}")]
         [SwaggerOperation("Register")]
