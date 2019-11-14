@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Api.Configs;
+using Api.IdentityTools;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -23,39 +24,27 @@ namespace Api.Controllers
     public class AccountController : Controller
     {
         private readonly IOptions<JwtSettings> _jwtSettings;
-        private UserManager<Contractor> _contractorUserManager;
-        private UserManager<Homeowner> _homeownerUserManager;
-        private UserManager<InternalUser> _internalUserManager;
-        private SignInManager<Contractor> _contractorSignManager;
-        private SignInManager<Homeowner> _homeownerSignManager;
-        private SignInManager<InternalUser> _internalUserSignManager;
+        private readonly GenericUserManager _genericUserManager;
+        private readonly GenericSignInManager _genericSignInManager;
 
         public AccountController(IOptions<JwtSettings> jwtSettings,
-            UserManager<Contractor> contractorUserManager,
-            UserManager<Homeowner> homeownerUserManager,
-            UserManager<InternalUser> internalUserManager,
-            SignInManager<Contractor> contractorSignManager,
-            SignInManager<Homeowner> homeownerSignManager,
-            SignInManager<InternalUser> internalUserSignManager
+            GenericUserManager genericUserManager,
+            GenericSignInManager genericSignInManager
             )
         {
             _jwtSettings = jwtSettings;
-            _contractorUserManager = contractorUserManager;
-            _homeownerUserManager = homeownerUserManager;
-            _internalUserManager = internalUserManager;
-            _contractorSignManager = contractorSignManager;
-            _homeownerSignManager = homeownerSignManager;
-            _internalUserSignManager = internalUserSignManager;
+            _genericUserManager = genericUserManager;
+            _genericSignInManager = genericSignInManager;
         }
 
         [HttpGet]
-        [Route("")]
+        [Route("{role}")]
         [SwaggerOperation("AccountInfo")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromRoute] RoleEnum role)
         {
             return User.Identity.IsAuthenticated
-                ? Ok(await _userManager.FindByEmailAsync(User.Identity.Name))
-                : Ok(new object());
+                ? Ok(await _genericUserManager.FindByNameAsync(User.Identity.Name)(role))
+                : Ok(new { });
         }
 
         [HttpGet]
@@ -78,7 +67,7 @@ namespace Api.Controllers
             user.UserName = registerViewModel.Username;
             user.Email = registerViewModel.Email;
 
-            var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+            var result = await _genericUserManager.CreateAsync(user, registerViewModel.Password)(registerViewModel.Role);
 
             return result.Succeeded
                 ? (IActionResult) Ok(new {user.Email, user.UserName})
@@ -100,9 +89,9 @@ namespace Api.Controllers
         public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel)
         {
             // Ensure the username and password is valid.
-            var user = await _userManager.FindByNameAsync(loginViewModel.Username);
+            var user = await _genericUserManager.FindByNameAsync(loginViewModel.Username)(loginViewModel.Role);
 
-            if (user == null || !await _userManager.CheckPasswordAsync(user, loginViewModel.Password))
+            if (user == null || !await _genericUserManager.CheckPasswordAsync(user, loginViewModel.Password)(loginViewModel.Role))
             {
                 return BadRequest(new
                 {
@@ -111,7 +100,7 @@ namespace Api.Controllers
                 });
             }
 
-            await _signManager.SignInAsync(user, true);
+            await _genericSignInManager.SignInAsync(user, true)(loginViewModel.Role);
 
             // Generate and issue a JWT token
             var claims = new[]
@@ -140,22 +129,9 @@ namespace Api.Controllers
         [HttpGet]
         [Route("Logout/{roleEnum}")]
         [SwaggerOperation("Logout")]
-        public async Task<IActionResult> Logout(RoleEnum roleEnum)
+        public async Task<IActionResult> Logout([FromRoute] RoleEnum roleEnum)
         {
-            switch (roleEnum)
-            {
-                case RoleEnum.Internal:
-                    await _internalUserSignManager.SignOutAsync();
-                    break;
-                case RoleEnum.Contractor:
-                    await _contractorSignManager.SignOutAsync();
-                    break;
-                case RoleEnum.Homeowner:
-                    await _homeownerSignManager.SignOutAsync();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(roleEnum), roleEnum, null);
-            }
+            await _genericSignInManager.SignOutAsync()(roleEnum);
 
             return Ok("Logged-Out");
         }

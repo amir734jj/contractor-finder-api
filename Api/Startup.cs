@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Api.Configs;
+using Api.Controllers;
 using Api.Extensions;
 using Api.Utilities;
 using Castle.DynamicProxy;
@@ -137,10 +138,7 @@ namespace Api
                 }
             });
 
-            void IdentityOptions(IdentityOptions opt)
-            {
-                opt.User.RequireUniqueEmail = true;
-            }
+            void IdentityOptions(IdentityOptions opt) => opt.User.RequireUniqueEmail = true;
 
             services.AddIdentity<InternalUser, UserRole>(IdentityOptions)
                 .AddDefaultTokenProviders()
@@ -209,7 +207,7 @@ namespace Api
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app"></param>
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, AccountController _)
         {
             // Add SecureHeadersMiddleware to the pipeline
             app.UseSecureHeadersMiddleware(_configuration.Get<SecureHeadersMiddlewareConfiguration>());
