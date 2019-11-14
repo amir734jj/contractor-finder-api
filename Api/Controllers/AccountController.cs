@@ -5,15 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Api.Configs;
 using Api.IdentityTools;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Models.Entities;
-using Models.Entities.Contractors;
-using Models.Entities.Homeowners;
-using Models.Entities.Internals;
-using Models.Entities.Users;
 using Models.Enums;
 using Models.ViewModels;
 using Swashbuckle.AspNetCore.Annotations;
@@ -56,42 +50,33 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        [Route("Register")]
+        [Route("Register/{role}")]
         [SwaggerOperation("Register")]
-        public async Task<IActionResult> Register([FromBody] RegisterViewModel registerViewModel)
+        public async Task<IActionResult> Register([FromRoute] RoleEnum role, [FromBody] RegisterViewModel registerViewModel)
         {
-            var user = Models.Entities.Users.User.New(registerViewModel.Role);
+            var user = Models.Entities.Users.User.New(role);
 
             user.Firstname = registerViewModel.Firstname;
             user.Lastname = registerViewModel.Lastname;
             user.UserName = registerViewModel.Username;
             user.Email = registerViewModel.Email;
 
-            var result = await _genericUserManager.CreateAsync(user, registerViewModel.Password)(registerViewModel.Role);
+            var result = await _genericUserManager.CreateAsync(user, registerViewModel.Password)(role);
 
             return result.Succeeded
                 ? (IActionResult) Ok(new {user.Email, user.UserName})
                 : BadRequest("Failed to register!");
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [HttpGet]
-        [Route("Login")]
-        [SwaggerOperation("Login")]
-        public async Task<IActionResult> Login()
-        {
-            return Ok("Please log-in by posting to this route!");
-        }
-
         [HttpPost]
-        [Route("Login")]
+        [Route("Login/{role}")]
         [SwaggerOperation("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel loginViewModel)
+        public async Task<IActionResult> Login([FromRoute] RoleEnum role, [FromBody] LoginViewModel loginViewModel)
         {
             // Ensure the username and password is valid.
-            var user = await _genericUserManager.FindByNameAsync(loginViewModel.Username)(loginViewModel.Role);
+            var user = await _genericUserManager.FindByNameAsync(loginViewModel.Username)(role);
 
-            if (user == null || !await _genericUserManager.CheckPasswordAsync(user, loginViewModel.Password)(loginViewModel.Role))
+            if (user == null || !await _genericUserManager.CheckPasswordAsync(user, loginViewModel.Password)(role))
             {
                 return BadRequest(new
                 {
@@ -100,7 +85,7 @@ namespace Api.Controllers
                 });
             }
 
-            await _genericSignInManager.SignInAsync(user, true)(loginViewModel.Role);
+            await _genericSignInManager.SignInAsync(user, true)(role);
 
             // Generate and issue a JWT token
             var claims = new[]
@@ -134,14 +119,6 @@ namespace Api.Controllers
             await _genericSignInManager.SignOutAsync()(roleEnum);
 
             return Ok("Logged-Out");
-        }
-
-        [HttpGet]
-        [Route("Forbidden")]
-        [SwaggerOperation("Forbidden")]
-        public async Task<IActionResult> Forbidden()
-        {
-            return Ok("Forbidden");
         }
     }
 }
