@@ -1,5 +1,3 @@
-using Models.Enums;
-
 namespace Models.ViewModels
 {
     /// <summary>
@@ -16,7 +14,5 @@ namespace Models.ViewModels
         public string Password { get; set; }
         
         public string Email { get; set; }
-        
-        public RoleEnum Role { get; set; }
     }
 }
