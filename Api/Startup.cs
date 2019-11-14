@@ -4,7 +4,10 @@ using System.Reflection;
 using System.Text;
 using Api.Configs;
 using Api.Extensions;
+using Api.Utilities;
+using Castle.DynamicProxy;
 using Dal;
+using Dal.IdentityStores;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -134,10 +137,27 @@ namespace Api
                 }
             });
 
-            services
-                .AddIdentityWithStore<Homeowner, UserRole, HomeownerUserStore>()
-                .AddIdentityWithStore<Contractor, UserRole, ContractorUserStore>()
-                .AddIdentityWithStore<AdminUser, UserRole, AdminUserStore>();
+            void IdentityOptions(IdentityOptions opt)
+            {
+                opt.User.RequireUniqueEmail = true;
+            }
+
+            services.AddIdentity<InternalUser, UserRole>(IdentityOptions)
+                .AddDefaultTokenProviders()
+                .AddUserStore<InternalUserStore>()
+                .AddRoleStore<GenericUserRoleStore>();
+
+            services.AddIdentityCore<Contractor>(IdentityOptions)
+                .AddRoles<UserRole>()
+                .AddDefaultTokenProviders()
+                .AddUserStore<ContractorUserStore>()
+                .AddRoleStore<GenericUserRoleStore>();
+
+            services.AddIdentityCore<Homeowner>(IdentityOptions)
+                .AddRoles<UserRole>()
+                .AddDefaultTokenProviders()
+                .AddUserStore<HomeownerUserStore>()
+                .AddRoleStore<GenericUserRoleStore>();
 
             var jwtSetting = new JwtSettings();
 
@@ -173,6 +193,8 @@ namespace Api
                     _.Assembly("Dal");
                     _.WithDefaultConventions();
                 });
+
+                config.ForSingletonOf<ProxyGenerator>().Use(new ProxyGenerator());
 
                 // Populate the container using the service collection
                 config.Populate(services);
