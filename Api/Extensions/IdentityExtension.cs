@@ -3,24 +3,25 @@ using Dal.Abstracts;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Models.Entities.Users;
 
 namespace Api.Extensions
 {
     public static class IdentityExtensions
     {
-        public static IServiceCollection AddIdentityWithStore<TUser, TRole, TUserStore, TRoleStore>(
+        public static IServiceCollection AddIdentityWithStore<TUser, TRole, TUserStore>(
             this IServiceCollection services)
             where TUser : class
             where TRole : class
-            where TUserStore: IUserStore<TUser>
-            where TRoleSore : IRoleStore<>
+            where TUserStore : class, IUserStore<TUser>
+            // where TRoleStore : class, IRoleStore<TRole>
         {
             services
-                .AddIdentityCore<TUser>()
+                .AddIdentityCore<User>()
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddRoles<TRole>()
                 .AddUserStore<TUserStore>()
-                .AddRoleStore<TRole>()
+                // .AddRoleStore<TRoleStore>()
                 .AddDefaultTokenProviders();
 
             return services;

@@ -13,7 +13,7 @@ using Models.Entities.Users;
 
 namespace Dal.Utilities
 {
-    public sealed class EntityDbContext: IdentityDbContext<User, UserRole, Guid>
+    public sealed class EntityDbContext: DbContext
     {
         public DbSet<Contractor> Contractors { get; set; }
 
@@ -30,11 +30,6 @@ namespace Dal.Utilities
         public EntityDbContext(DbContextOptions<EntityDbContext> optionsBuilderOptions) : base(optionsBuilderOptions)
         {
             Database.EnsureCreated();
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

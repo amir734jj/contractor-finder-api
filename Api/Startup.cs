@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Api.Configs;
 using Api.Extensions;
+using Dal;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -133,12 +134,10 @@ namespace Api
                 }
             });
 
-
             services
-                .AddIdentityWithStore<Homeowner, UserRole>()
-                .AddIdentityWithStore<Contractor, UserRole>()
-                .AddIdentityWithStore<AdminUser, UserRole>();
-            
+                .AddIdentityWithStore<Homeowner, UserRole, HomeownerUserStore>()
+                .AddIdentityWithStore<Contractor, UserRole, ContractorUserStore>()
+                .AddIdentityWithStore<AdminUser, UserRole, AdminUserStore>();
 
             var jwtSetting = new JwtSettings();
 
