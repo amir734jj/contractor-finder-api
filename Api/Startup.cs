@@ -18,8 +18,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Models.Abstracts;
 using Models.Constants;
-using Models.Entities.UserEntities;
+using Models.Entities.Contractors;
+using Models.Entities.Homeowners;
+using Models.Entities.Internals;
+using Models.Entities.Users;
 using OwaspHeaders.Core.Extensions;
 using OwaspHeaders.Core.Models;
 using StructureMap;
@@ -129,10 +133,12 @@ namespace Api
                 }
             });
 
-            services.AddIdentity<User, UserRole>(x => x.User.RequireUniqueEmail = true)
-                .AddEntityFrameworkStores<EntityDbContext>()
-                .AddRoles<UserRole>()
-                .AddDefaultTokenProviders();
+
+            services
+                .AddIdentityWithStore<Homeowner, UserRole>()
+                .AddIdentityWithStore<Contractor, UserRole>()
+                .AddIdentityWithStore<AdminUser, UserRole>();
+            
 
             var jwtSetting = new JwtSettings();
 

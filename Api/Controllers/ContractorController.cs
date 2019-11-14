@@ -4,7 +4,7 @@ using Api.Abstracts;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Entities.ContractorEntities;
+using Models.Entities.Contractors;
 
 namespace Api.Controllers
 {

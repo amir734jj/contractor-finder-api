@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Models.Entities;
-using Models.Entities.UserEntities;
+using Models.Entities.Users;
 using Models.ViewModels;
 using Swashbuckle.AspNetCore.Annotations;
 

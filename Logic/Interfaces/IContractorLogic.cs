@@ -1,5 +1,5 @@
 ﻿using Models.Entities;
-using Models.Entities.ContractorEntities;
+using Models.Entities.Contractors;
 
 namespace Logic.Interfaces
 {

@@ -1,4 +1,4 @@
-﻿using Models.Entities.ContractorEntities;
+﻿using Models.Entities.Contractors;
 
 namespace Dal.Interfaces
 {
