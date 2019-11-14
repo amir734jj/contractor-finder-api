@@ -2,14 +2,24 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities.ContractorEntities;
-using Models.Entities.UserEntities;
+using Models.Abstracts;
+using Models.Entities;
+using Models.Entities.Common;
+using Models.Entities.Contractors;
+using Models.Entities.Homeowners;
+using Models.Entities.Internals;
+using Models.Entities.Projects;
+using Models.Entities.Users;
 
 namespace Dal.Utilities
 {
     public sealed class EntityDbContext: IdentityDbContext<User, UserRole, Guid>
     {
         public DbSet<Contractor> Contractors { get; set; }
+
+        public DbSet<Homeowner> Homeowners { get; set; }
+        
+        public DbSet<AdminUser> AdminUsers { get; set; }
 
         /// <inheritdoc />
         /// <summary>
@@ -24,12 +34,6 @@ namespace Dal.Utilities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Contractor>()
-                .HasOne(x => x.ProfilePhoto)
-                .WithOne(x => x.Contractor)
-                .HasForeignKey<ContractorProfilePhoto>(x => x.ContractorId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -5,7 +5,7 @@ using Dal.Abstracts;
 using Dal.Interfaces;
 using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities.ContractorEntities;
+using Models.Entities.Contractors;
 
 namespace Dal
 {
