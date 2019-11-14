@@ -9,7 +9,7 @@ using Models.Entities.Internals;
 
 namespace Dal.IdentityStores
 {
-/*    public class ContractorUserManager : UserManager<Contractor>
+    public class ContractorUserManager : UserManager<Contractor>
     {
         public ContractorUserManager(IUserStore<Contractor> store, IOptions<IdentityOptions> optionsAccessor, IPasswordHasher<Contractor> passwordHasher, IEnumerable<IUserValidator<Contractor>> userValidators, IEnumerable<IPasswordValidator<Contractor>> passwordValidators, ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<Contractor>> logger) : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
@@ -28,5 +28,5 @@ namespace Dal.IdentityStores
         public InternalUserUserManager(IUserStore<InternalUser> store, IOptions<IdentityOptions> optionsAccessor, IPasswordHasher<InternalUser> passwordHasher, IEnumerable<IUserValidator<InternalUser>> userValidators, IEnumerable<IPasswordValidator<InternalUser>> passwordValidators, ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<InternalUser>> logger) : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
-    }*/
+    }
 }

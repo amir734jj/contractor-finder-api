@@ -23,7 +23,7 @@ namespace Api.Utilities
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true,
                 Pooling = true,
-                ApplicationName = "milwaukee-internationals"
+                ApplicationName = "contractor-finder-api"
             };
             
             return isUrl ? connectionStringBuilder.ToString() : string.Empty;
