@@ -16,4 +16,7 @@
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.111" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IdentityStores" />
+  </ItemGroup>
 </Project>
