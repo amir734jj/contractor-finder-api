@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Models.Entities.Common;
 using Models.Entities.Contractors;
@@ -9,7 +10,7 @@ using Models.Interfaces;
 
 namespace Models.Entities.Users
 {
-    public abstract class User : IdentityUser<Guid>, IPerson
+    public class User : IdentityUser<Guid>, IPerson
     {
         public string Firstname { get; set; }
 
@@ -17,17 +18,18 @@ namespace Models.Entities.Users
 
         public ProfilePhoto ProfilePhoto { get; set; }
 
-        public abstract RoleEnum ResolveRole();
 
-        public static User New(RoleEnum roleEnum)
-        {
-            return roleEnum switch
-            {
-                RoleEnum.Internal => (User) new InternalUser(),
-                RoleEnum.Contractor => new Contractor(),
-                RoleEnum.Homeowner => new Homeowner(),
-                _ => throw new ArgumentOutOfRangeException(nameof(roleEnum), roleEnum, null)
-            };
-        }
+        [JsonIgnore] public Contractor ContractorRef { get; set; }
+
+        public Guid? ContractorKey { get; set; }
+
+
+        [JsonIgnore] public Homeowner HomeownerRef { get; set; }
+
+        public Guid? HomeownerKey { get; set; }
+
+        [JsonIgnore] public InternalUser InternalUserRef { get; set; }
+
+        public Guid? InternalUserKey { get; set; }
     }
 }

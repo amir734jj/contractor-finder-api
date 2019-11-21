@@ -6,7 +6,6 @@ using Api.Configs;
 using Api.Controllers;
 using Api.Extensions;
 using Castle.DynamicProxy;
-using Dal.IdentityStores;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -22,8 +21,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Constants;
-using Models.Entities.Contractors;
-using Models.Entities.Homeowners;
 using Models.Entities.Internals;
 using Models.Entities.Users;
 using OwaspHeaders.Core.Extensions;
@@ -139,33 +136,13 @@ namespace Api
                 }
             });
 
-            void IdentityOptions(IdentityOptions opt) => opt.User.RequireUniqueEmail = true;
+            services.AddIdentity<User, UserRole>(opt => opt.User.RequireUniqueEmail = true)
+                .AddEntityFrameworkStores<EntityDbContext>()
+                .AddDefaultTokenProviders();
 
-            services.AddIdentity<InternalUser, UserRole>(IdentityOptions)
-                .AddDefaultTokenProviders()
-                .AddUserStore<InternalUserStore>()
-                .AddRoleStore<GenericUserRoleStore>();
-
-            services.AddIdentityCore<Contractor>(IdentityOptions)
-                .AddRoles<UserRole>()
-                .AddDefaultTokenProviders()
-                .AddUserStore<ContractorUserStore>()
-                .AddRoleStore<GenericUserRoleStore>();
-
-            services.AddIdentityCore<Homeowner>(IdentityOptions)
-                .AddRoles<UserRole>()
-                .AddDefaultTokenProviders()
-                .AddUserStore<HomeownerUserStore>()
-                .AddRoleStore<GenericUserRoleStore>();
-
-            var jwtSetting = new JwtSettings();
-
-            var jwtConfigSection = _configuration.GetSection("JwtSettings");
-
-            // Populate the JwtSettings object
-            jwtConfigSection.Bind(jwtSetting);
-
-            services.Configure<JwtSettings>(jwtConfigSection);
+            var jwtSetting = _configuration
+                .GetSection("JwtSettings")
+                .Get<JwtSettings>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(x => x.Cookie.MaxAge = TimeSpan.FromMinutes(60))
