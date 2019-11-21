@@ -48,7 +48,6 @@ namespace Dal
         public override async Task<Contractor> Get(Guid id)
         {
             return await GetDbSet()
-                .Include(x => x.ProfilePhoto)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
@@ -59,7 +58,6 @@ namespace Dal
         public override async Task<IEnumerable<Contractor>> GetAll()
         {
             return await GetDbSet()
-                .Include(x => x.ProfilePhoto)
                 .ToListAsync();
         }
     }

@@ -1,13 +1,14 @@
+using System;
+using System.ComponentModel.DataAnnotations;
 using Models.Entities.Users;
-using Models.Enums;
+using Models.Interfaces;
 
 namespace Models.Entities.Internals
 {
-    public class InternalUser : User
+    public class InternalUser : IEntity
     {
-        public override RoleEnum ResolveRole()
-        {
-            return RoleEnum.Internal;
-        }
+        public Guid Id { get; set; }
+        
+        public User UserRef { get; set; }
     }
 }
