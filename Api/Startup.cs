@@ -21,7 +21,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Constants;
-using Models.Entities.Internals;
 using Models.Entities.Users;
 using OwaspHeaders.Core.Extensions;
 using OwaspHeaders.Core.Models;

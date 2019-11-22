@@ -14,7 +14,7 @@ namespace Dal.Utilities
 
         public DbSet<Homeowner> Homeowners { get; set; }
         
-        public DbSet<InternalUser> AdminUsers { get; set; }
+        public DbSet<InternalUser> InternalUsers { get; set; }
 
         /// <inheritdoc />
         /// <summary>
