@@ -5,7 +5,6 @@ using Models.Entities.Common;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 using Models.Entities.Internals;
-using Models.Enums;
 using Models.Interfaces;
 
 namespace Models.Entities.Users

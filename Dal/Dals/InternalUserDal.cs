@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Dal.Abstracts;
 using Dal.Interfaces;
 using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities.Contractors;
+using Models.Entities.Homeowners;
+using Models.Entities.Internals;
 
 namespace Dal
 {
-    public class ContractorDal : BasicCrudDalAbstract<Contractor>, IContractorDal
+    public class InternalUserDal : BasicCrudDalAbstract<InternalUser>, IInternalUserDal
     {
         private readonly EntityDbContext _dbContext;
         
@@ -17,7 +16,7 @@ namespace Dal
         /// Constructor dependency injection
         /// </summary>
         /// <param name="dbContext"></param>
-        public ContractorDal(EntityDbContext dbContext)
+        public InternalUserDal(EntityDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -35,30 +34,20 @@ namespace Dal
         /// Returns students entity
         /// </summary>
         /// <returns></returns>
-        protected override DbSet<Contractor> GetDbSet()
+        protected override DbSet<InternalUser> GetDbSet()
         {
-            return _dbContext.Contractors;
+            return _dbContext.InternalUsers;
         }
 
         /// <summary>
-        /// Override to include related entity
+        /// Include certain fields
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="source"></param>
         /// <returns></returns>
-        public override async Task<Contractor> Get(Guid id)
+        protected override TQueryable Interceptor<TQueryable>(TQueryable source)
         {
-            return await GetDbSet()
-                .FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        /// <summary>
-        /// Override to include related entity
-        /// </summary>
-        /// <returns></returns>
-        public override async Task<IEnumerable<Contractor>> GetAll()
-        {
-            return await GetDbSet()
-                .ToListAsync();
+            return (TQueryable) source
+                .Include(x => x.UserRef);
         }
     }
 }

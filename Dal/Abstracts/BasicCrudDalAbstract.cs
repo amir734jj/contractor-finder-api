@@ -11,7 +11,7 @@ using Models.Interfaces;
 namespace Dal.Abstracts
 {
     public abstract class BasicCrudDalAbstract<T> : IBasicCrudDal<T> where T : class, IEntity
-    {   
+    {
         /// <summary>
         /// Abstract to get database context
         /// </summary>
@@ -23,6 +23,12 @@ namespace Dal.Abstracts
         /// </summary>
         /// <returns></returns>
         protected abstract DbSet<T> GetDbSet();
+
+        /// <summary>
+        /// Intercept the IQueryable to include
+        /// </summary>
+        /// <returns></returns>
+        protected abstract TQueryable Interceptor<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>;
 
         /// <summary>
         /// Returns all entities
@@ -40,7 +46,7 @@ namespace Dal.Abstracts
         /// <returns></returns>
         public virtual async Task<T> Get(Guid id)
         {
-            return await GetDbSet().FirstOrDefaultCacheAsync(x => x.Id == id);
+            return await Interceptor(GetDbSet()).FirstOrDefaultCacheAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -64,7 +70,7 @@ namespace Dal.Abstracts
         /// <returns></returns>
         public virtual async Task<T> Delete(Guid id)
         {
-            var entity = GetDbSet().FirstOrDefault(x => x.Id == id);
+            var entity = await Get(id);
 
             if (entity != null)
             {

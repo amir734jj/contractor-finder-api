@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Models.Entities.Projects;
 using Models.Entities.Users;
 using Models.Interfaces;
@@ -15,6 +15,7 @@ namespace Models.Entities.Contractors
         
         public List<HomeownerProject> HomeownerProjects { get; set; }
         
+        [JsonIgnore]
         public User UserRef { get; set; }
     }
 }

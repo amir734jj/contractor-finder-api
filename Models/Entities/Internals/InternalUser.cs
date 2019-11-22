@@ -1,7 +1,7 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using Models.Entities.Users;
 using Models.Interfaces;
+using Newtonsoft.Json;
 
 namespace Models.Entities.Internals
 {
@@ -9,6 +9,7 @@ namespace Models.Entities.Internals
     {
         public Guid Id { get; set; }
         
+        [JsonIgnore]
         public User UserRef { get; set; }
     }
 }
