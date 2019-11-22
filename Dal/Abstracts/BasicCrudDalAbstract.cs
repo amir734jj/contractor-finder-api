@@ -36,7 +36,7 @@ namespace Dal.Abstracts
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return await GetDbSet().ToListAsync();
+            return await Interceptor(GetDbSet()).ToListAsync();
         }
 
         /// <summary>
