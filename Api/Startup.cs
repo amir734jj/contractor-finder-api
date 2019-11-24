@@ -80,7 +80,17 @@ namespace Api
 
             services.AddRouting(options => { options.LowercaseUrls = true; });
 
-            services.AddDistributedMemoryCache();
+            if (_env.IsDevelopment())
+            {
+                services.AddDistributedMemoryCache();
+            }
+            else
+            {
+                services.AddDistributedRedisCache(opt =>
+                {
+                    opt.Configuration = Environment.GetEnvironmentVariable("REDISCLOUD_URL");
+                });
+            }
 
             services.AddSession(options =>
             {
