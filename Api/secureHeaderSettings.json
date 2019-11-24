@@ -27,7 +27,7 @@
     "UseXContentTypeOptions": "false",
     "UseContentSecurityPolicy": "false",
     "ContentSecurityPolicyConfiguration": {
-      "BlockAllMixedContent": "true",
+      "BlockAllMixedContent": "false",
       "UpgradeInsecureRequests": "false"
     }
   }
