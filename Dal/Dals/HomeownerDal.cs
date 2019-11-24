@@ -1,7 +1,11 @@
-﻿using Dal.Abstracts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Dal.Abstracts;
 using Dal.Interfaces;
 using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Models.Entities.Common;
 using Models.Entities.Homeowners;
 
 namespace Dal
@@ -42,9 +46,10 @@ namespace Dal
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected override TQueryable Interceptor<TQueryable>(TQueryable source)
+        protected override IQueryable<Homeowner> Interceptor<TQueryable>(
+            TQueryable source)
         {
-            return (TQueryable) source
+            return source
                 .Include(x => x.UserRef)
                 .Include(x => x.Projects)
                 .ThenInclude(x => x.ProjectPhotos);

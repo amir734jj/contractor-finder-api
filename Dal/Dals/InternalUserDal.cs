@@ -1,7 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
 using Dal.Abstracts;
 using Dal.Interfaces;
 using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Models.Entities.Common;
+using Models.Entities.Homeowners;
 using Models.Entities.Internals;
 
 namespace Dal
@@ -42,7 +47,8 @@ namespace Dal
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected override TQueryable Interceptor<TQueryable>(TQueryable source)
+        protected override IQueryable<InternalUser> Interceptor<TQueryable>(
+            TQueryable source)
         {
             return (TQueryable) source
                 .Include(x => x.UserRef);
