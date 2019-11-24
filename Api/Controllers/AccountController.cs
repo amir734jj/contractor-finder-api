@@ -100,7 +100,7 @@ namespace Api.Controllers
             return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Logout")]
         [SwaggerOperation("Logout")]
         public async Task<IActionResult> Logout()
