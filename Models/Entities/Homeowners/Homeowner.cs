@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Models.Entities.Projects;
 using Models.Entities.Users;
 using Models.Interfaces;
-using Newtonsoft.Json;
 
 namespace Models.Entities.Homeowners
 {

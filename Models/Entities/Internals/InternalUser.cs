@@ -1,7 +1,7 @@
 using System;
+using System.Text.Json.Serialization;
 using Models.Entities.Users;
 using Models.Interfaces;
-using Newtonsoft.Json;
 
 namespace Models.Entities.Internals
 {
