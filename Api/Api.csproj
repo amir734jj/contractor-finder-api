@@ -20,7 +20,7 @@
     <ProjectReference Include="..\Logic\Logic.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="IdentityTools" />
+    <Folder Include="IdentityRoles" />
     <Folder Include="wwwroot" />
   </ItemGroup>
 </Project>
