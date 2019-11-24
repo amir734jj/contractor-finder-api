@@ -17,7 +17,7 @@
     "UseXFrameOptions": "true",
     "XFrameOptionsConfiguration": {
       "OptionValue": "allowfrom",
-      "AllowFromDomain": "com.gaprogman.dotnetcore"
+      "AllowFromDomain": "com.herokuapp.contractor-finder-ui"
     },
     "UseXssProtection": "true",
     "XssConfiguration": {
