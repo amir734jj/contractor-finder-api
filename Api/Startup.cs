@@ -9,6 +9,7 @@ using Api.Extensions;
 using Castle.DynamicProxy;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -94,8 +95,6 @@ namespace Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Contractor-Finder-Api"});
 
-                c.DescribeAllEnumsAsStrings();
-
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -142,7 +141,10 @@ namespace Api
                 .GetSection("JwtSettings")
                 .Get<JwtSettings>();
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            services.AddAuthentication(opt => {
+                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddCookie(x => x.Cookie.MaxAge = TimeSpan.FromMinutes(60))
                 .AddJwtBearer(config =>
                 {
