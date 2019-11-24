@@ -71,6 +71,8 @@ namespace Api
             // Add framework services
             // Add functionality to inject IOptions<T>
             services.AddOptions();
+            services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
+
 
             // Add our Config object so it can be injected
             services.Configure<SecureHeadersMiddlewareConfiguration>(

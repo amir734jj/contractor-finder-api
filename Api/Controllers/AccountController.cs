@@ -2,6 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Api.Configs;
 using Microsoft.AspNetCore.Identity;
@@ -22,13 +23,15 @@ namespace Api.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signManager;
         private readonly IOptions<JwtSettings> _jwtSettings;
+        private readonly IRoleStore<UserRole> _roleStore;
 
         public AccountController(IOptions<JwtSettings> jwtSettings, UserManager<User> userManager,
-            SignInManager<User> signManager)
+            SignInManager<User> signManager, IRoleStore<UserRole> roleStore)
         {
             _jwtSettings = jwtSettings;
             _userManager = userManager;
             _signManager = signManager;
+            _roleStore = roleStore;
         }
 
         [HttpGet]
@@ -56,7 +59,10 @@ namespace Api.Controllers
 
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
 
-            await _userManager.AddToRoleAsync(user, role.ToString());
+            if (_roleStore.FindByNameAsync(role.ToString(), CancellationToken.None) == null)
+            {
+                await _userManager.AddToRoleAsync(user, role.ToString());
+            }
 
             return result.Succeeded ? (IActionResult) Ok("Successfully registered!") : BadRequest("Failed to register!");
         }
