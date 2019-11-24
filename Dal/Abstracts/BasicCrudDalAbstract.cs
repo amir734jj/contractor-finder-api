@@ -6,6 +6,9 @@ using AgileObjects.AgileMapper;
 using Dal.Extensions;
 using Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Models.Entities.Common;
+using Models.Entities.Homeowners;
 using Models.Interfaces;
 
 namespace Dal.Abstracts
@@ -28,7 +31,8 @@ namespace Dal.Abstracts
         /// Intercept the IQueryable to include
         /// </summary>
         /// <returns></returns>
-        protected abstract TQueryable Interceptor<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>;
+        protected abstract IQueryable<T>
+            Interceptor<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>;
 
         /// <summary>
         /// Returns all entities
@@ -46,7 +50,7 @@ namespace Dal.Abstracts
         /// <returns></returns>
         public virtual async Task<T> Get(Guid id)
         {
-            return await Interceptor(GetDbSet()).FirstOrDefaultCacheAsync(x => x.Id == id);
+            return await Interceptor(GetDbSet()).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
