@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using Api.Configs;
 using Api.Controllers;
 using Api.Extensions;
@@ -92,7 +93,7 @@ namespace Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Contractor-Finder-Api"});
-                
+
                 c.DescribeAllEnumsAsStrings();
 
                 // Set the comments path for the Swagger JSON and UI.
@@ -101,8 +102,7 @@ namespace Api
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services
-                .AddControllers(opt =>
+            services.AddControllers(opt =>
                 {
                     opt.EnableEndpointRouting = false;
 
@@ -117,9 +117,8 @@ namespace Api
                         opt.Filters.Add<AllowAnonymousFilter>();
                     }
                 })
-                .AddNewtonsoftJson()
-                .AddRazorPagesOptions(x => x.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()))
-                .AddNewtonsoftJson();
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
+                .AddRazorPagesOptions(x => x.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()));
 
             services.AddDbContext<EntityDbContext>(builder =>
             {

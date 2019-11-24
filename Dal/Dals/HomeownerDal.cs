@@ -2,7 +2,6 @@
 using Dal.Interfaces;
 using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 
 namespace Dal
