@@ -55,7 +55,9 @@ namespace Api.Controllers
             });
 
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
-            
+
+            await _userManager.AddToRoleAsync(user, role.ToString());
+
             return result.Succeeded ? (IActionResult) Ok("Successfully registered!") : BadRequest("Failed to register!");
         }
 
