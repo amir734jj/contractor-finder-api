@@ -4,11 +4,8 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using Api.Configs;
-using Api.Controllers;
 using Api.Extensions;
-using Castle.DynamicProxy;
 using Dal.Utilities;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -105,12 +102,23 @@ namespace Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Contractor-Finder-Api"});
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Contractor-Finder-Api",
+                    Description = "Contractor finder service API layer, .NET Core + PostgresSQL"
+                });
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+              
+                c.AddSecurityDefinition("Bearer", // Name the security scheme
+                    new OpenApiSecurityScheme {
+                        Description = "JWT Authorization header using the Bearer scheme.",
+                        Type = SecuritySchemeType.Http, //We set the scheme type to http since we're using bearer authentication
+                        Scheme = "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
+                    });
             });
 
             services.AddControllers(opt =>
@@ -182,8 +190,6 @@ namespace Api
                     _.WithDefaultConventions();
                 });
 
-                config.ForSingletonOf<ProxyGenerator>().Use(new ProxyGenerator());
-
                 // Populate the container using the service collection
                 config.Populate(services);
             });
@@ -204,9 +210,7 @@ namespace Api
 
             app.UseCors("CorsPolicy")
                 .UseEnableRequestRewind()
-                .UseDeveloperExceptionPage()
-                .UseAuthentication()
-                .UseAuthorization();
+                .UseDeveloperExceptionPage();
 
             if (_env.IsDevelopment())
             {
@@ -226,6 +230,8 @@ namespace Api
                 .UseCookiePolicy()
                 .UseSession()
                 .UseRouting()
+                .UseAuthentication()
+                .UseAuthorization()
                 .UseEndpoints(endpoints => endpoints.MapControllers());
 
             Console.WriteLine("Application Started!");
