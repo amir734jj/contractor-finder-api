@@ -24,29 +24,5 @@ namespace Api.Controllers
         {
             return _contractorLogic;
         }
-
-        [AllowAnonymous]
-        public override Task<IActionResult> GetAll()
-        {
-            return base.GetAll();
-        }
-
-        [AllowAnonymous]
-        public override Task<IActionResult> Get(Guid id)
-        {
-            return base.Get(id);
-        }
-
-        [Authorize(Roles = "Admin,Moderator")]
-        public override Task<IActionResult> Save(Contractor instance)
-        {
-            return base.Save(instance);
-        }
-
-        [Authorize(Roles = "Admin,Moderator")]
-        public override Task<IActionResult> Update(Guid id, Contractor instance)
-        {
-            return base.Update(id, instance);
-        }
     }
 }

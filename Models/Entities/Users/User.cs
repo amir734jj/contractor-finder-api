@@ -5,12 +5,15 @@ using Models.Entities.Common;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 using Models.Entities.Internals;
+using Models.Enums;
 using Models.Interfaces;
 
 namespace Models.Entities.Users
 {
     public class User : IdentityUser<Guid>, IPerson
     {
+        public RoleEnum Role { get; set; }
+
         public string Firstname { get; set; }
 
         public string Lastname { get; set; }

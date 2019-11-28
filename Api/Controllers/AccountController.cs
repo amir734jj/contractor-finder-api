@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -23,15 +25,15 @@ namespace Api.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signManager;
         private readonly IOptions<JwtSettings> _jwtSettings;
-        private readonly IRoleStore<UserRole> _roleStore;
+        private readonly RoleManager<UserRole> _roleManager;
 
         public AccountController(IOptions<JwtSettings> jwtSettings, UserManager<User> userManager,
-            SignInManager<User> signManager, IRoleStore<UserRole> roleStore)
+            SignInManager<User> signManager, RoleManager<UserRole> roleManager)
         {
             _jwtSettings = jwtSettings;
             _userManager = userManager;
             _signManager = signManager;
-            _roleStore = roleStore;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -47,7 +49,8 @@ namespace Api.Controllers
         [HttpPost]
         [Route("Register/{role}")]
         [SwaggerOperation("Register")]
-        public async Task<IActionResult> Register([FromRoute]RoleEnum role, [FromBody] RegisterViewModel registerViewModel)
+        public async Task<IActionResult> Register([FromRoute] RoleEnum role,
+            [FromBody] RegisterViewModel registerViewModel)
         {
             var user = UserFactory.New(role, x =>
             {
@@ -55,16 +58,27 @@ namespace Api.Controllers
                 x.Lastname = registerViewModel.Lastname;
                 x.Email = registerViewModel.Email;
                 x.UserName = registerViewModel.Username;
+                x.Role = role;
             });
 
-            var result = await _userManager.CreateAsync(user, registerViewModel.Password);
-
-            if (_roleStore.FindByNameAsync(role.ToString(), CancellationToken.None) == null)
+            // Create user
+            var identityResults = new List<IdentityResult>
             {
-                await _userManager.AddToRoleAsync(user, role.ToString());
+                await _userManager.CreateAsync(user, registerViewModel.Password)
+            };
+
+            // Create the role if not exist
+            if (!await _roleManager.RoleExistsAsync(role.ToString()))
+            {
+                identityResults.Add(await _roleManager.CreateAsync(new UserRole {Name = role.ToString()}));
             }
 
-            return result.Succeeded ? (IActionResult) Ok("Successfully registered!") : BadRequest("Failed to register!");
+            // Register the user to the role
+            identityResults.Add(await _userManager.AddToRoleAsync(user, role.ToString()));
+
+            return identityResults.Aggregate(true, (b, result) => b && result.Succeeded)
+                ? (IActionResult) Ok("Successfully registered!")
+                : BadRequest("Failed to register!");
         }
 
         [HttpPost]
@@ -74,7 +88,7 @@ namespace Api.Controllers
         {
             // Ensure the username and password is valid.
             var user = await _userManager.FindByNameAsync(loginViewModel.Username);
-            
+
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginViewModel.Password))
             {
                 return BadRequest(new
@@ -87,12 +101,13 @@ namespace Api.Controllers
             await _signManager.SignInAsync(user, true);
 
             // Generate and issue a JWT token
-            var claims = new [] {
+            var claims = new[]
+            {
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-          
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Value.Key));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -103,7 +118,17 @@ namespace Api.Controllers
                 expires: DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenDurationInMinutes),
                 signingCredentials: credentials);
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            var userRoleInfo = await _userManager.GetRolesAsync(user);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                roles = userRoleInfo,
+                user.Role,
+                user.Firstname,
+                user.Lastname,
+                user.Email
+            });
         }
 
         [HttpPost]
