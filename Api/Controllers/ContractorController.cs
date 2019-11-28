@@ -24,5 +24,11 @@ namespace Api.Controllers
         {
             return _contractorLogic;
         }
+
+        [AllowAnonymous]
+        public override Task<IActionResult> GetAll()
+        {
+            return base.GetAll();
+        }
     }
 }
