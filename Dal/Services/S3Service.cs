@@ -44,7 +44,7 @@ namespace Dal.Services
                     return new
                     {
                         Message = response?.ResponseMetadata?.RequestId,
-                        Status = response.HttpStatusCode
+                        Status = response?.HttpStatusCode
                     };
                 }
 
