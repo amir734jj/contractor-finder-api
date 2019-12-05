@@ -3,6 +3,9 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
 using Dal.Utilities;
@@ -69,8 +72,7 @@ namespace Api
             // Add functionality to inject IOptions<T>
             services.AddOptions();
             services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
-
-
+            
             // Add our Config object so it can be injected
             services.Configure<SecureHeadersMiddlewareConfiguration>(
                 _configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
@@ -181,6 +183,17 @@ namespace Api
 
             var container = new Container(config =>
             {
+                var (key, secret) = (
+                        Environment.GetEnvironmentVariable("CLOUDCUBE_ACCESS_KEY_ID"),
+                        Environment.GetEnvironmentVariable("CLOUDCUBE_SECRET_ACCESS_KEY")
+                    );
+
+                // Generally bad practice
+                var credentials = new BasicAWSCredentials(key, secret);
+
+                // Create S3 client
+                config.For<AmazonS3Client>().Use("AmazonS3Client", () => new AmazonS3Client(credentials));
+
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>
                 {
