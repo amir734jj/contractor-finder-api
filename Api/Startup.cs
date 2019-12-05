@@ -192,7 +192,7 @@ namespace Api
                 var credentials = new BasicAWSCredentials(key, secret);
 
                 // Create S3 client
-                config.For<AmazonS3Client>().Use("AmazonS3Client", () => new AmazonS3Client(credentials));
+                config.For<AmazonS3Client>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast2));
 
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>
