@@ -14,10 +14,12 @@ namespace Dal.Services
     public class S3Service
     {
         private readonly IAmazonS3 _client;
+        private readonly string _prefix;
 
-        public S3Service(IAmazonS3 client)
+        public S3Service(IAmazonS3 client, string prefix)
         {
             _client = client;
+            _prefix = prefix;
         }
 
         /// <summary>
@@ -125,8 +127,7 @@ namespace Dal.Services
         /// <param name="data"></param>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public async Task<object> Upload(string bucketName, string fileKey, byte[] data,
-            IReadOnlyDictionary<string, string> metadata)
+        public async Task<object> Upload(string bucketName, string fileKey, byte[] data, IReadOnlyDictionary<string, string> metadata)
         {
             try
             {
@@ -136,11 +137,9 @@ namespace Dal.Services
 
                     var fileTransferUtilityRequest = new TransferUtilityUploadRequest
                     {
-                        Key = fileKey,
+                        Key = $"{_prefix}/{fileKey}",
                         InputStream = new MemoryStream(data),
                         BucketName = bucketName,
-                        StorageClass = S3StorageClass.Standard,
-                        PartSize = 6291456,
                         CannedACL = S3CannedACL.NoACL
                     };
 
@@ -151,8 +150,10 @@ namespace Dal.Services
 
                     await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
                 }
-
-                throw new Exception($"Bucket: {bucketName} does not exist");
+                else
+                {
+                    throw new Exception($"Bucket: {bucketName} does not exist");
+                }
             }
 
             // Catch specific amazon errors
@@ -174,6 +175,8 @@ namespace Dal.Services
                     Status = HttpStatusCode.InternalServerError
                 };
             }
+
+            return null;
         }
 
         public async Task<object> List(string bucketName)
@@ -252,7 +255,7 @@ namespace Dal.Services
                 var request = new GetObjectRequest
                 {
                     BucketName = bucketName,
-                    Key = keyName
+                    Key = $"{_prefix}/{keyName}"
                 };
 
                 using var response = await _client.GetObjectAsync(request);
