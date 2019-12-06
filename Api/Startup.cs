@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -8,7 +10,9 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
+using Dal.Services;
 using Dal.Utilities;
+using Flurl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -72,7 +76,7 @@ namespace Api
             // Add functionality to inject IOptions<T>
             services.AddOptions();
             services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
-            
+
             // Add our Config object so it can be injected
             services.Configure<SecureHeadersMiddlewareConfiguration>(
                 _configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
@@ -114,12 +118,15 @@ namespace Api
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
-              
+
                 c.AddSecurityDefinition("Bearer", // Name the security scheme
-                    new OpenApiSecurityScheme {
+                    new OpenApiSecurityScheme
+                    {
                         Description = "JWT Authorization header using the Bearer scheme.",
-                        Type = SecuritySchemeType.Http, //We set the scheme type to http since we're using bearer authentication
-                        Scheme = "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
+                        Type = SecuritySchemeType
+                            .Http, //We set the scheme type to http since we're using bearer authentication
+                        Scheme =
+                            "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
                     });
             });
 
@@ -163,7 +170,8 @@ namespace Api
                 .GetSection("JwtSettings")
                 .Get<JwtSettings>();
 
-            services.AddAuthentication(opt => {
+            services.AddAuthentication(opt =>
+                {
                     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
@@ -183,16 +191,20 @@ namespace Api
 
             var container = new Container(config =>
             {
-                var (key, secret) = (
-                        Environment.GetEnvironmentVariable("CLOUDCUBE_ACCESS_KEY_ID"),
-                        Environment.GetEnvironmentVariable("CLOUDCUBE_SECRET_ACCESS_KEY")
-                    );
+                var (accessKeyId, secretAccessKey, url) = (
+                    Environment.GetEnvironmentVariable("CLOUDCUBE_ACCESS_KEY_ID"),
+                    Environment.GetEnvironmentVariable("CLOUDCUBE_SECRET_ACCESS_KEY"),
+                    Environment.GetEnvironmentVariable("CLOUDCUBE_URL")
+                );
 
+                var prefix = new Uri(url).Segments[1];
+                
                 // Generally bad practice
-                var credentials = new BasicAWSCredentials(key, secret);
+                var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
 
                 // Create S3 client
-                config.For<AmazonS3Client>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast2));
+                config.For<IAmazonS3>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast1));
+                config.For<S3Service>().Use(ctx => new S3Service(ctx.GetInstance<IAmazonS3>(), prefix));
 
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>
@@ -216,8 +228,11 @@ namespace Api
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app"></param>
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, S3Service s3)
         {
+            // Example of upload to S3
+            // var re = s3.Upload("cloud-cube", "Taha", new byte[100], new Dictionary<string, string>()).Result;
+            
             // Add SecureHeadersMiddleware to the pipeline
             app.UseSecureHeadersMiddleware(_configuration.Get<SecureHeadersMiddlewareConfiguration>());
 
