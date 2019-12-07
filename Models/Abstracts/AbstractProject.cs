@@ -9,13 +9,13 @@ namespace Models.Abstracts
     public class AbstractProject : IEntity
     {
         public Guid Id { get; set; }
-        
+
         public string Title { get; set; }
-        
+
         public string Description { get; set; }
-        
+
         public List<ProjectPhoto> ProjectPhotos { get; set; }
-        
-        public Contractor Contractor { get; set; }
+
+        public List<Contractor> Contractors { get; set; }
     }
 }
