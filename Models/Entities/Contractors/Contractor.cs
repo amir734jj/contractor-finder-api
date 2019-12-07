@@ -12,8 +12,8 @@ namespace Models.Entities.Contractors
         public Guid Id { get; set; }
 
         public List<ShowcaseProject> ShowcaseProjects { get; set; }
-        
-        public List<HomeownerProject> HomeownerProjects { get; set; }
+
+        public List<ProjectMilestone> HomeownerProjects { get; set; }
         
         [JsonIgnore]
         public User UserRef { get; set; }

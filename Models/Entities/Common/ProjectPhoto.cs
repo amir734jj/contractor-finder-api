@@ -1,4 +1,6 @@
+using System;
 using Models.Abstracts;
+using Models.Interfaces;
 
 namespace Models.Entities.Common
 {

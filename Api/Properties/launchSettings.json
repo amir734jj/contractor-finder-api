@@ -8,7 +8,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "CLOUDCUBE_ACCESS_KEY_ID": "AKIA37SVVXBHWU244NJI",
         "CLOUDCUBE_SECRET_ACCESS_KEY": "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",
-        "CLOUDCUBE_URL": "https://cloud-cube.s3.amazonaws.com/xfxq39odb9y9"
+        "CLOUDCUBE_URL": "https://cloud-cube.s3.amazonaws.com/xfxq39odb9y9",
+        "DATABASE_URL": ""
       }
     }
   }

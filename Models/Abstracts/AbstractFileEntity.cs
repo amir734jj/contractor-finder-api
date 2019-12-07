@@ -1,21 +1,16 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Models.Interfaces;
+using System.Collections.Generic;
 
 namespace Models.Abstracts
 {
-    public abstract class AbstractFileEntity : IEntity
+    public abstract class AbstractFileEntity
     {
-        [Key]
-        public Guid Id { get; set; }
-
         public string Name { get; set; }
         
-        public string MimeType { get; set; }
-
-        [Column(TypeName = "text")]
-        [MaxLength] 
-        public string Base64 { get; set; }
+        public string ContentType { get; set; }
+        
+        public IReadOnlyDictionary<string, string> Metadata { get; set; }
+        
+        public Uri Uri { get; set; }
     }
 }

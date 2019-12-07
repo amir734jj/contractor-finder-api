@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 using Models.Entities.Internals;
+using Models.Entities.Projects;
 using Models.Entities.Users;
 
 namespace Dal.Utilities
@@ -51,6 +52,11 @@ namespace Dal.Utilities
                 .HasForeignKey<User>(x => x.InternalUserKey)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(false);
+
+            builder.Entity<Homeowner>()
+                .HasMany(x => x.Projects)
+                .WithOne(x => x.Homeowner)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
