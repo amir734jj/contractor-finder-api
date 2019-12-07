@@ -28,8 +28,7 @@ namespace Dal.Abstracts
         /// Intercept the IQueryable to include
         /// </summary>
         /// <returns></returns>
-        protected abstract IQueryable<T>
-            Interceptor<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>;
+        protected abstract IQueryable<T> Include<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>;
 
         /// <summary>
         /// Returns all entities
@@ -37,7 +36,7 @@ namespace Dal.Abstracts
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return await Interceptor(GetDbSet()).ToListAsync();
+            return await Include(GetDbSet()).ToListAsync();
         }
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace Dal.Abstracts
         /// <returns></returns>
         public virtual async Task<T> Get(Guid id)
         {
-            return await Interceptor(GetDbSet()).FirstOrDefaultAsync(x => x.Id == id);
+            return await Include(GetDbSet()).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
