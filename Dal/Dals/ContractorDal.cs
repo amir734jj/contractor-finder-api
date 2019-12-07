@@ -5,7 +5,7 @@ using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities.Contractors;
 
-namespace Dal
+namespace Dal.Dals
 {
     public class ContractorDal : BasicCrudDalAbstract<Contractor>, IContractorDal
     {
