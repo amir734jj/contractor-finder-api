@@ -5,7 +5,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Dal\Dal.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions" />
-  </ItemGroup>
 </Project>

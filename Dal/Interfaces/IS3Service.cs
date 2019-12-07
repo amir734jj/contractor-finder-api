@@ -8,13 +8,13 @@ namespace Dal.Interfaces
 {
     public interface IS3Service
     {
-        Task<SimpleS3Response> Upload(string bucketName,
-            string fileKey,
+        Task<SimpleS3Response> Upload(
+            Guid fileKey,
             Stream data,
             IReadOnlyDictionary<string, string> metadata);
 
-        Task<UriS3Response> GetUri(string bucketName, string keyName);
+        Task<UriS3Response> GetUri(Guid keyName);
 
-        Task<DownloadS3Response> Download(string bucketName, string keyName);
+        Task<DownloadS3Response> Download(Guid keyName);
     }
 }

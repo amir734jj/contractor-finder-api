@@ -26,7 +26,7 @@ namespace Models.Entities.Users
         public Guid ProfilePhotoKey { get; set; }
 
         [NotMapped]
-        public ProfilePhoto ProfilePhoto { get; }
+        public ProfilePhoto ProfilePhoto { get; set; }
 
         [JsonIgnore]
         public Contractor ContractorRef { get; set; }

@@ -1,10 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Api.Abstracts;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Models.Entities.Contractors;
 using Models.Entities.Internals;
 
 namespace Api.Controllers

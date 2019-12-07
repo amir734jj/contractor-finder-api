@@ -22,7 +22,7 @@ namespace Models.Entities.Projects
         
         [JsonIgnore]
         public Homeowner Homeowner { get; set; }
-        
+
         /// <summary>
         /// Keys to lookup from S3
         /// </summary>
@@ -31,6 +31,6 @@ namespace Models.Entities.Projects
         public HashSet<Guid> ProjectPhotosKeys { get; set; }
 
         [NotMapped]
-        public HashSet<ProjectPhoto> ProjectPhotos { get; set; }
+        public List<ProjectPhoto> ProjectPhotos { get; set; }
     }
 }

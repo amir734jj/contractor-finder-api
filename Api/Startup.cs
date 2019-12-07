@@ -8,6 +8,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
+using AutoMapper;
 using Dal.Services.S3;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,6 +31,7 @@ using OwaspHeaders.Core.Extensions;
 using OwaspHeaders.Core.Models;
 using StructureMap;
 using static Api.Utilities.ConnectionStringUtility;
+using static Api.Utilities.AutoMapperBuilder;
 
 namespace Api
 {
@@ -69,7 +71,7 @@ namespace Api
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             });
-            
+
             // Add framework services
             // Add functionality to inject IOptions<T>
             services.AddOptions();
@@ -112,7 +114,11 @@ namespace Api
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
 
                 c.AddSecurityDefinition("Bearer", // Name the security scheme
                     new OpenApiSecurityScheme
@@ -189,13 +195,14 @@ namespace Api
                 );
 
                 var prefix = new Uri(url).Segments[1];
+                const string bucketName = "cloud-cube";
                 
                 // Generally bad practice
                 var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
 
                 // Create S3 client
                 config.For<IAmazonS3>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast1));
-                config.For<S3Service>().Use(ctx => new S3Service(ctx.GetInstance<ILogger<S3Service>>(), ctx.GetInstance<IAmazonS3>(), prefix));
+                config.For<S3Service>().Use(ctx => new S3Service(ctx.GetInstance<ILogger<S3Service>>(),ctx.GetInstance<IAmazonS3>(), bucketName, prefix));
 
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>
@@ -208,6 +215,8 @@ namespace Api
 
                 // Populate the container using the service collection
                 config.Populate(services);
+
+                config.For<IMapper>().Use(ctx => ResolveMapper(ctx, Assembly.Load("Logic"))).Singleton();
             });
 
             container.AssertConfigurationIsValid();
