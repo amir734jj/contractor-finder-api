@@ -53,7 +53,6 @@ namespace Dal
             return  source
                 .Include(x => x.UserRef)
                 .Include(x => x.HomeownerProjects)
-                .ThenInclude(x => x.ProjectPhotos)
                 .Include(x => x.ShowcaseProjects)
                 .ThenInclude(x => x.ProjectPhotos);
         }

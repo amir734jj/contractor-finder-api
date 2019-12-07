@@ -13,7 +13,7 @@ namespace Dal.Interfaces
             Stream data,
             IReadOnlyDictionary<string, string> metadata);
 
-        Task<Uri> GetUri(string bucketName, string keyName);
+        Task<UriS3Response> GetUri(string bucketName, string keyName);
 
         Task<DownloadS3Response> Download(string bucketName, string keyName);
     }

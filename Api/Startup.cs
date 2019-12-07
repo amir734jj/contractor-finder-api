@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -10,9 +8,8 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
-using Dal.Services;
+using Dal.Services.S3;
 using Dal.Utilities;
-using Flurl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Constants;
@@ -71,7 +69,7 @@ namespace Api
                     .AllowAnyMethod()
                     .AllowAnyHeader());
             });
-
+            
             // Add framework services
             // Add functionality to inject IOptions<T>
             services.AddOptions();
@@ -83,7 +81,7 @@ namespace Api
 
             services.AddLogging();
 
-            services.AddRouting(options => { options.LowercaseUrls = true; });
+            services.AddRouting(options => options.LowercaseUrls = true);
 
             if (_env.IsDevelopment())
             {
@@ -91,10 +89,7 @@ namespace Api
             }
             else
             {
-                services.AddDistributedRedisCache(opt =>
-                {
-                    opt.Configuration = Environment.GetEnvironmentVariable("REDISCLOUD_URL");
-                });
+                services.AddDistributedRedisCache(opt => opt.Configuration = _configuration.GetRequiredValue<string>("REDISCLOUD_URL"));
             }
 
             services.AddSession(options =>
@@ -154,9 +149,7 @@ namespace Api
                 }
                 else
                 {
-                    builder.UseNpgsql(
-                        ConnectionStringUrlToResource(Environment.GetEnvironmentVariable("DATABASE_URL"))
-                        ?? throw new Exception("DATABASE_URL is null"));
+                    builder.UseNpgsql(ConnectionStringUrlToResource(_configuration.GetRequiredValue<string>("DATABASE_URL")));
                 }
             });
 
@@ -190,9 +183,9 @@ namespace Api
             var container = new Container(config =>
             {
                 var (accessKeyId, secretAccessKey, url) = (
-                    Environment.GetEnvironmentVariable("CLOUDCUBE_ACCESS_KEY_ID"),
-                    Environment.GetEnvironmentVariable("CLOUDCUBE_SECRET_ACCESS_KEY"),
-                    Environment.GetEnvironmentVariable("CLOUDCUBE_URL")
+                    _configuration.GetRequiredValue<string>("CLOUDCUBE_ACCESS_KEY_ID"),
+                    _configuration.GetRequiredValue<string>("CLOUDCUBE_SECRET_ACCESS_KEY"),
+                    _configuration.GetRequiredValue<string>("CLOUDCUBE_URL")
                 );
 
                 var prefix = new Uri(url).Segments[1];
@@ -202,7 +195,7 @@ namespace Api
 
                 // Create S3 client
                 config.For<IAmazonS3>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast1));
-                config.For<S3Service>().Use(ctx => new S3Service(ctx.GetInstance<IAmazonS3>(), prefix));
+                config.For<S3Service>().Use(ctx => new S3Service(ctx.GetInstance<ILogger<S3Service>>(), ctx.GetInstance<IAmazonS3>(), prefix));
 
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>
@@ -226,11 +219,8 @@ namespace Api
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app"></param>
-        public void Configure(IApplicationBuilder app, S3Service s3)
+        public void Configure(IApplicationBuilder app)
         {
-            // Example of upload to S3
-            // var re = s3.Upload("cloud-cube", "Taha", new byte[100], new Dictionary<string, string>()).Result;
-            
             // Add SecureHeadersMiddleware to the pipeline
             app.UseSecureHeadersMiddleware(_configuration.Get<SecureHeadersMiddlewareConfiguration>());
 

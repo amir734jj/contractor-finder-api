@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Models.Entities.Common;
@@ -18,19 +19,27 @@ namespace Models.Entities.Users
 
         public string Lastname { get; set; }
 
-        public ProfilePhoto ProfilePhoto { get; set; }
+        /// <summary>
+        /// Keys to lookup from S3
+        /// </summary>
+        [JsonIgnore]
+        public Guid ProfilePhotoKey { get; set; }
 
+        [NotMapped]
+        public ProfilePhoto ProfilePhoto { get; }
 
-        [JsonIgnore] public Contractor ContractorRef { get; set; }
+        [JsonIgnore]
+        public Contractor ContractorRef { get; set; }
 
         public Guid? ContractorKey { get; set; }
-
-
-        [JsonIgnore] public Homeowner HomeownerRef { get; set; }
+        
+        [JsonIgnore]
+        public Homeowner HomeownerRef { get; set; }
 
         public Guid? HomeownerKey { get; set; }
 
-        [JsonIgnore] public InternalUser InternalUserRef { get; set; }
+        [JsonIgnore]
+        public InternalUser InternalUserRef { get; set; }
 
         public Guid? InternalUserKey { get; set; }
     }
