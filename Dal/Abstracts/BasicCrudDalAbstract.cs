@@ -6,9 +6,6 @@ using AgileObjects.AgileMapper;
 using Dal.Extensions;
 using Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Models.Entities.Common;
-using Models.Entities.Homeowners;
 using Models.Interfaces;
 
 namespace Dal.Abstracts

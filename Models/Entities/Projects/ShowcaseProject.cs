@@ -24,7 +24,7 @@ namespace Models.Entities.Projects
         public HashSet<Guid> ProjectPhotosKeys { get; set; }
 
         [NotMapped]
-        public HashSet<ProjectPhoto> ProjectPhotos { get; set; }
+        public List<ProjectPhoto> ProjectPhotos { get; set; }
 
         [JsonIgnore]
         public Contractor Contractor { get; set; }

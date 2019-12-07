@@ -18,17 +18,20 @@ namespace Dal.Services.S3
         private readonly IAmazonS3 _client;
         private readonly string _prefix;
         private readonly ILogger<S3Service> _logger;
+        private readonly string _bucketName;
 
         /// <summary>
         /// Constructor that takes a S3Client and a prefix for all paths
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="client"></param>
+        /// <param name="bucketName"></param>
         /// <param name="prefix"></param>
-        public S3Service(ILogger<S3Service> logger, IAmazonS3 client, string prefix)
+        public S3Service(ILogger<S3Service> logger, IAmazonS3 client, string bucketName, string prefix)
         {
             _logger = logger;
             _client = client;
+            _bucketName = bucketName;
             _prefix = prefix;
         }
 
@@ -40,11 +43,11 @@ namespace Dal.Services.S3
         /// <param name="data"></param>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public async Task<SimpleS3Response> Upload(string bucketName, string fileKey, Stream data, IReadOnlyDictionary<string, string> metadata)
+        public async Task<SimpleS3Response> Upload(Guid fileKey, Stream data, IReadOnlyDictionary<string, string> metadata)
         {
             try
             {
-                if (await _client.DoesS3BucketExistAsync(bucketName))
+                if (await _client.DoesS3BucketExistAsync(_bucketName))
                 {
                     var fileTransferUtility = new TransferUtility(_client);
 
@@ -52,7 +55,7 @@ namespace Dal.Services.S3
                     {
                         Key = $"{_prefix}/{fileKey}",
                         InputStream = data,
-                        BucketName = bucketName,
+                        BucketName = _bucketName,
                         CannedACL = S3CannedACL.NoACL
                     };
 
@@ -67,7 +70,7 @@ namespace Dal.Services.S3
                 }
 
                 // Bucket not found
-                throw new Exception($"Bucket: {bucketName} does not exist");
+                throw new Exception($"Bucket: {_bucketName} does not exist");
             }
             // Catch specific amazon errors
             catch (AmazonS3Exception e)
@@ -88,24 +91,23 @@ namespace Dal.Services.S3
         /// <summary>
         ///     Get a file from S3
         /// </summary>
-        /// <param name="bucketName">Bucket where the file is stored</param>
         /// <param name="keyName">Key name of the bucket (File Name)</param>
         /// <returns></returns>
-        public async Task<UriS3Response> GetUri(string bucketName, string keyName)
+        public async Task<UriS3Response> GetUri(Guid keyName)
         {
             try
             {
                 // Build the request with the bucket name and the keyName (name of the file)
                 var preSignedUrlRequest = new GetPreSignedUrlRequest
                 {
-                    BucketName = bucketName,
+                    BucketName = _bucketName,
                     Key = $"{_prefix}/{keyName}",
                     Expires = DateTime.Now.AddHours(1)
                 };
 
                 var urlString = _client.GetPreSignedURL(preSignedUrlRequest);
 
-                var file = await Download(bucketName, keyName);
+                var file = await Download(keyName);
 
                 return new UriS3Response(HttpStatusCode.OK, "Successfully generated Uri", new Uri(urlString),  file.MetaData, file.ContentType, file.Name);
             }
@@ -125,14 +127,14 @@ namespace Dal.Services.S3
             }
         }
         
-        public async Task<DownloadS3Response> Download(string bucketName, string keyName)
+        public async Task<DownloadS3Response> Download(Guid keyName)
         {
             try
             {
                 // Build the request with the bucket name and the keyName (name of the file)
                 var request = new GetObjectRequest
                 {
-                    BucketName = bucketName,
+                    BucketName = _bucketName,
                     Key = $"{_prefix}/{keyName}"
                 };
 
