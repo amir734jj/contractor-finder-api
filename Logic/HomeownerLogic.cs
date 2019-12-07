@@ -1,4 +1,5 @@
-﻿using Dal.Interfaces;
+﻿using AutoMapper;
+using Dal.Interfaces;
 using Logic.Abstracts;
 using Logic.Interfaces;
 using Models.Entities.Homeowners;
@@ -8,14 +9,17 @@ namespace Logic
     public class HomeownerLogic : BasicCrudLogicAbstract<Homeowner>, IHomeownerLogic
     {
         private readonly IHomeownerDal _homeownerDal;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Constructor dependency injection
         /// </summary>
         /// <param name="homeownerDal"></param>
-        public HomeownerLogic(IHomeownerDal homeownerDal)
+        /// <param name="mapper"></param>
+        public HomeownerLogic(IHomeownerDal homeownerDal, IMapper mapper)
         {
             _homeownerDal = homeownerDal;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -25,6 +29,15 @@ namespace Logic
         protected override IBasicCrudDal<Homeowner> GetBasicCrudDal()
         {
             return _homeownerDal;
+        }
+
+        /// <summary>
+        /// Returns AutoMapper instance
+        /// </summary>
+        /// <returns></returns>
+        protected override IMapper Mapper()
+        {
+            return _mapper;
         }
     }
 }
