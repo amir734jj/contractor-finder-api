@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Dal.Interfaces;
 using Logic.Interfaces;
 
@@ -15,12 +17,18 @@ namespace Logic.Abstracts
         protected abstract IBasicCrudDal<T> GetBasicCrudDal();
 
         /// <summary>
+        /// AutoMapper instance
+        /// </summary>
+        /// <returns></returns>
+        protected abstract IMapper Mapper();
+
+        /// <summary>
         /// Call forwarding
         /// </summary>
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return await GetBasicCrudDal().GetAll();
+            return Map(await GetBasicCrudDal().GetAll());
         }
 
         /// <summary>
@@ -30,7 +38,7 @@ namespace Logic.Abstracts
         /// <returns></returns>
         public virtual async Task<T> Get(Guid id)
         {
-            return await GetBasicCrudDal().Get(id);
+            return Map(await GetBasicCrudDal().Get(id));
         }
 
         /// <summary>
@@ -73,6 +81,26 @@ namespace Logic.Abstracts
         public virtual async Task<T> Update(Guid id, Action<T> modifyAction)
         {
             return await GetBasicCrudDal().Update(id, modifyAction);
+        }
+
+        /// <summary>
+        /// Map for IEnumerable
+        /// </summary>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        private IEnumerable<T> Map(IEnumerable<T> items)
+        {
+            return items.Select(Map);
+        }
+
+        /// <summary>
+        /// Method that derives custom properties upon GET
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        protected virtual T Map(T item)
+        {
+            return Mapper().Map<T>(item);
         }
     }
 }

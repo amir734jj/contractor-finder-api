@@ -17,8 +17,8 @@ namespace Dal.Services.S3
     {
         private readonly IAmazonS3 _client;
         private readonly string _prefix;
-        private readonly ILogger<S3Service> _logger;
         private readonly string _bucketName;
+        private readonly ILogger<S3Service> _logger;
 
         /// <summary>
         /// Constructor that takes a S3Client and a prefix for all paths
@@ -36,9 +36,8 @@ namespace Dal.Services.S3
         }
 
         /// <summary>
-        ///     Upload a file to an S3, here four files are uploaded in four different ways
+        /// Upload a file to an S3, here four files are uploaded in four different ways
         /// </summary>
-        /// <param name="bucketName">Bucket where the file is stored</param>
         /// <param name="fileKey"></param>
         /// <param name="data"></param>
         /// <param name="metadata"></param>
@@ -89,7 +88,7 @@ namespace Dal.Services.S3
         }
 
         /// <summary>
-        ///     Get a file from S3
+        /// Get a file from S3
         /// </summary>
         /// <param name="keyName">Key name of the bucket (File Name)</param>
         /// <returns></returns>
@@ -127,6 +126,11 @@ namespace Dal.Services.S3
             }
         }
         
+        /// <summary>
+        /// Download S3 object
+        /// </summary>
+        /// <param name="keyName"></param>
+        /// <returns></returns>
         public async Task<DownloadS3Response> Download(Guid keyName)
         {
             try
