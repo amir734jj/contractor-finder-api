@@ -43,7 +43,7 @@ namespace Dal.Dals
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected override IQueryable<InternalUser> Interceptor<TQueryable>(
+        protected override IQueryable<InternalUser> Include<TQueryable>(
             TQueryable source)
         {
             return (TQueryable) source
