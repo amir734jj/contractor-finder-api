@@ -1,7 +1,7 @@
 using Models.Abstracts;
 using Models.ViewModels.Services.S3;
 
-namespace Models.Utilities
+namespace Logic.Utilities
 {
     public static class FileRepresentationUtility
     {

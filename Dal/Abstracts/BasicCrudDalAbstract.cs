@@ -122,8 +122,8 @@ namespace Dal.Abstracts
         /// <param name="modifyAction"></param>
         /// <returns></returns>
         public virtual async Task<T> Update(Guid id, Action<T> modifyAction)
-        {            
-            var entity = await GetDbSet().FirstOrDefaultCacheAsync(x => x.Id == id);
+        {
+            var entity = await Get(id);
                 
             if (entity != null)
             {
