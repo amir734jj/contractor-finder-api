@@ -8,6 +8,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
+using Api.Middlewares.FileUpload;
 using AutoMapper;
 using Dal.Services.S3;
 using Dal.Utilities;
@@ -103,9 +104,9 @@ namespace Api
                 options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             });
 
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(config =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                config.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Contractor-Finder-Api",
                     Description = "Contractor finder service API layer, .NET Core + PostgresSQL"
@@ -117,10 +118,12 @@ namespace Api
 
                 if (File.Exists(xmlPath))
                 {
-                    c.IncludeXmlComments(xmlPath);
+                    config.IncludeXmlComments(xmlPath);
                 }
+                
+                config.OperationFilter<FileUploadOperation>();
 
-                c.AddSecurityDefinition("Bearer", // Name the security scheme
+                config.AddSecurityDefinition("Bearer", // Name the security scheme
                     new OpenApiSecurityScheme
                     {
                         Description = "JWT Authorization header using the Bearer scheme.",
