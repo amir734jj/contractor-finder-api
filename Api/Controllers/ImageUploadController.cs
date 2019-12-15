@@ -12,7 +12,8 @@ using Models.Constants;
 namespace Api.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [ApiController]
+    [Route("Api/[controller]")]
     public class ImageUploadController : Controller
     {
         private readonly IImageUploadLogic _imageUploadLogic;
