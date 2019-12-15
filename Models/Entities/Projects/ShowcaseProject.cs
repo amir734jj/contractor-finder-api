@@ -21,7 +21,7 @@ namespace Models.Entities.Projects
         /// </summary>
         [JsonIgnore]
         [Column(TypeName = "jsonb")]
-        public List<Guid> ProjectPhotosKeys { get; set; }
+        public HashSet<Guid> ProjectPhotosKeys { get; set; }
 
         [NotMapped]
         public List<ProjectPhoto> ProjectPhotos { get; set; }
