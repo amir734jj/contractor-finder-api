@@ -11,7 +11,7 @@ namespace Dal.Interfaces
         Task<SimpleS3Response> Upload(
             Guid fileKey,
             Stream data,
-            IReadOnlyDictionary<string, string> metadata);
+            IDictionary<string, string> metadata);
 
         Task<UriS3Response> GetUri(Guid keyName);
 

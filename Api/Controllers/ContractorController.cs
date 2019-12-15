@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Api.Abstracts;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -22,12 +21,6 @@ namespace Api.Controllers
         protected override IBasicCrudLogic<Contractor> BasicCrudLogic()
         {
             return _contractorLogic;
-        }
-
-        [AllowAnonymous]
-        public override Task<IActionResult> GetAll()
-        {
-            return base.GetAll();
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
+using Dal.Configs;
 using Dal.Interfaces;
 using Microsoft.Extensions.Logging;
 using Models.ViewModels.Services.S3;
@@ -16,23 +17,20 @@ namespace Dal.Services.S3
     public class S3Service : IS3Service
     {
         private readonly IAmazonS3 _client;
-        private readonly string _prefix;
-        private readonly string _bucketName;
         private readonly ILogger<S3Service> _logger;
+        private readonly S3ServiceConfig _s3ServiceConfig;
 
         /// <summary>
         /// Constructor that takes a S3Client and a prefix for all paths
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="client"></param>
-        /// <param name="bucketName"></param>
-        /// <param name="prefix"></param>
-        public S3Service(ILogger<S3Service> logger, IAmazonS3 client, string bucketName, string prefix)
+        /// <param name="s3ServiceConfig"></param>
+        public S3Service(ILogger<S3Service> logger, IAmazonS3 client, S3ServiceConfig s3ServiceConfig)
         {
             _logger = logger;
             _client = client;
-            _bucketName = bucketName;
-            _prefix = prefix;
+            _s3ServiceConfig = s3ServiceConfig;
         }
 
         /// <summary>
@@ -42,19 +40,19 @@ namespace Dal.Services.S3
         /// <param name="data"></param>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public async Task<SimpleS3Response> Upload(Guid fileKey, Stream data, IReadOnlyDictionary<string, string> metadata)
+        public async Task<SimpleS3Response> Upload(Guid fileKey, Stream data, IDictionary<string, string> metadata)
         {
             try
             {
-                if (await _client.DoesS3BucketExistAsync(_bucketName))
+                if (await _client.DoesS3BucketExistAsync(_s3ServiceConfig.BucketName))
                 {
                     var fileTransferUtility = new TransferUtility(_client);
 
                     var fileTransferUtilityRequest = new TransferUtilityUploadRequest
                     {
-                        Key = $"{_prefix}/{fileKey}",
+                        Key = $"{_s3ServiceConfig.Prefix}/{fileKey}",
                         InputStream = data,
-                        BucketName = _bucketName,
+                        BucketName = _s3ServiceConfig.BucketName,
                         CannedACL = S3CannedACL.NoACL
                     };
 
@@ -69,7 +67,7 @@ namespace Dal.Services.S3
                 }
 
                 // Bucket not found
-                throw new Exception($"Bucket: {_bucketName} does not exist");
+                throw new Exception($"Bucket: {_s3ServiceConfig.BucketName} does not exist");
             }
             // Catch specific amazon errors
             catch (AmazonS3Exception e)
@@ -99,8 +97,8 @@ namespace Dal.Services.S3
                 // Build the request with the bucket name and the keyName (name of the file)
                 var preSignedUrlRequest = new GetPreSignedUrlRequest
                 {
-                    BucketName = _bucketName,
-                    Key = $"{_prefix}/{keyName}",
+                    BucketName = _s3ServiceConfig.BucketName,
+                    Key = $"{_s3ServiceConfig.Prefix}/{keyName}",
                     Expires = DateTime.Now.AddHours(1)
                 };
 
@@ -138,8 +136,8 @@ namespace Dal.Services.S3
                 // Build the request with the bucket name and the keyName (name of the file)
                 var request = new GetObjectRequest
                 {
-                    BucketName = _bucketName,
-                    Key = $"{_prefix}/{keyName}"
+                    BucketName = _s3ServiceConfig.BucketName,
+                    Key = $"{_s3ServiceConfig.Prefix}/{keyName}"
                 };
 
                 using var response = await _client.GetObjectAsync(request);
