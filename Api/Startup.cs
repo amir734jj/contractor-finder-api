@@ -9,6 +9,7 @@ using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
 using Api.Middlewares.FileUpload;
+using Api.Middlewares;
 using AutoMapper;
 using Dal.Services.S3;
 using Dal.Utilities;
@@ -112,6 +113,8 @@ namespace Api
                     Description = "Contractor finder service API layer, .NET Core + PostgresSQL"
                 });
 
+                config.DescribeAllEnumsAsStrings();
+
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -146,9 +149,10 @@ namespace Api
                     {
                         opt.Filters.Add<AllowAnonymousFilter>();
                     }
+
+                    opt.Filters.Add<CustomExceptionFilterAttribute>();
                 })
-                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()))
-                .AddRazorPagesOptions(x => x.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()));
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
             services.AddDbContext<EntityDbContext>(builder =>
             {
