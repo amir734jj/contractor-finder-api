@@ -10,7 +10,7 @@ namespace Dal.Dals
     public class ContractorDal : BasicCrudDalAbstract<Contractor>, IContractorDal
     {
         private readonly EntityDbContext _dbContext;
-        
+
         /// <summary>
         /// Constructor dependency injection
         /// </summary>
@@ -46,11 +46,8 @@ namespace Dal.Dals
         protected override IQueryable<Contractor> Include<TQueryable>(
             TQueryable source)
         {
-            return  source
-                .Include(x => x.UserRef)
-                .Include(x => x.HomeownerProjects)
-                .Include(x => x.ShowcaseProjects)
-                .ThenInclude(x => x.ProjectPhotos);
+            return source
+                .Include(x => x.UserRef);
         }
     }
 }
