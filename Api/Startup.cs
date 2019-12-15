@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Text.Json.Serialization;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
@@ -11,24 +10,23 @@ using Api.Extensions;
 using Api.Middlewares.FileUpload;
 using Api.Middlewares;
 using AutoMapper;
-using Dal.Services.S3;
+using Dal.Configs;
 using Dal.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Constants;
 using Models.Entities.Users;
+using Newtonsoft.Json.Converters;
 using OwaspHeaders.Core.Extensions;
 using OwaspHeaders.Core.Models;
 using StructureMap;
@@ -93,7 +91,8 @@ namespace Api
             }
             else
             {
-                services.AddDistributedRedisCache(opt => opt.Configuration = _configuration.GetRequiredValue<string>("REDISCLOUD_URL"));
+                services.AddDistributedRedisCache(opt =>
+                    opt.Configuration = _configuration.GetRequiredValue<string>("REDISCLOUD_URL"));
             }
 
             services.AddSession(options =>
@@ -113,8 +112,6 @@ namespace Api
                     Description = "Contractor finder service API layer, .NET Core + PostgresSQL"
                 });
 
-                config.DescribeAllEnumsAsStrings();
-
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -123,15 +120,15 @@ namespace Api
                 {
                     config.IncludeXmlComments(xmlPath);
                 }
-                
+
                 config.OperationFilter<FileUploadOperation>();
 
                 config.AddSecurityDefinition("Bearer", // Name the security scheme
                     new OpenApiSecurityScheme
                     {
                         Description = "JWT Authorization header using the Bearer scheme.",
-                        Type = SecuritySchemeType.Http, //We set the scheme type to http since we're using bearer authentication
-                        Scheme = "bearer" //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
+                        Type = SecuritySchemeType.Http, // We set the scheme type to http since we're using bearer authentication
+                        Scheme = "bearer" // The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
                     });
             });
 
@@ -151,8 +148,9 @@ namespace Api
                     }
 
                     opt.Filters.Add<CustomExceptionFilterAttribute>();
+                    opt.Filters.Add<FileUploadActionFilterAttribute>();
                 })
-                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+                .AddNewtonsoftJson(option => option.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
             services.AddDbContext<EntityDbContext>(builder =>
             {
@@ -162,7 +160,8 @@ namespace Api
                 }
                 else
                 {
-                    builder.UseNpgsql(ConnectionStringUrlToResource(_configuration.GetRequiredValue<string>("DATABASE_URL")));
+                    builder.UseNpgsql(
+                        ConnectionStringUrlToResource(_configuration.GetRequiredValue<string>("DATABASE_URL")));
                 }
             });
 
@@ -203,13 +202,13 @@ namespace Api
 
                 var prefix = new Uri(url).Segments[1];
                 const string bucketName = "cloud-cube";
-                
+
                 // Generally bad practice
                 var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
 
                 // Create S3 client
                 config.For<IAmazonS3>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast1));
-                config.For<S3Service>().Use(ctx => new S3Service(ctx.GetInstance<ILogger<S3Service>>(),ctx.GetInstance<IAmazonS3>(), bucketName, prefix));
+                config.For<S3ServiceConfig>().Use(new S3ServiceConfig(bucketName, prefix));
 
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>

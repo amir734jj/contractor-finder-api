@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Api.Attributes;
@@ -29,7 +28,7 @@ namespace Api.Middlewares.FileUpload
             {
                 var mimeTypeTable = context.MethodInfo.GetParameters()
                     .Select(x => (x.Name, FileMimeTypeAttribute: x.GetCustomAttribute<FileMimeTypeAttribute>()))
-                    .Where(x => x.Name != null)
+                    .Where(x => x.FileMimeTypeAttribute != null)
                     .ToDictionary(x => x.Name, x => x.FileMimeTypeAttribute.MimeType);
 
                 foreach (var (key, value) in operation.RequestBody.Content.Where(x => x.Key == "multipart/form-data")
