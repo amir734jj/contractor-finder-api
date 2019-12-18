@@ -269,9 +269,9 @@ namespace Api
                 .UseStaticFiles()
                 .UseCookiePolicy()
                 .UseSession()
-                .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
+                .UseRouting()
                 .UseEndpoints(endpoints => endpoints.MapControllers());
 
             Console.WriteLine("Application Started!");
