@@ -1,0 +1,4 @@
+# Linq.Extensions
+
+- `DistinctBy()`
+- `DistinctByExcept()`
