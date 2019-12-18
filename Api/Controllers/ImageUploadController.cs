@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Api.Attributes;
 using Api.Extensions;
@@ -26,12 +26,14 @@ namespace Api.Controllers
         [FileUpload]
         [HttpPost]
         [Route("FileUpload")]
-        public async Task<IActionResult> ImageUpload([FileMimeType("image/*")] IFormFile file, [FromQuery] string description)
+        public async Task<IActionResult> ImageUpload([FileMimeType("image/*")] IFormFile file,
+            [FromQuery] string description)
         {
-            var response = await _imageUploadLogic.Upload(await file.ToStream(), new Dictionary<string, string>
-            {
-                [ImageMetadataKey.Description] = description
-            });
+            var response = await _imageUploadLogic.Upload(
+                await file.ToStream(),
+                ImmutableDictionary<string, string>.Empty
+                    .Add(ImageMetadataKey.Description, description)
+            );
 
             return Ok(response);
         }

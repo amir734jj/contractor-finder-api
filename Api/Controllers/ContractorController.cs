@@ -3,10 +3,11 @@ using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Contractors;
+using Models.Enums;
 
 namespace Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Internal,Contractor,Homeowner")]
     [ApiController]
     [Route("Api/[controller]")]
     public class ContractorController : BasicCrudController<Contractor>

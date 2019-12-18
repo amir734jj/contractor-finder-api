@@ -33,8 +33,8 @@ namespace Api.Middlewares.FileUpload
             {
                 var mimeTypeTable = methodInfo.GetParameters()
                     .Select(x => (x.Name, FileMimeTypeAttribute: x.GetCustomAttribute<FileMimeTypeAttribute>()))
-                    .Where(x => x.Name != null)
-                    .ToDictionary(x => x.Name, x => x.FileMimeTypeAttribute.MimeType);
+                    .Where(x => x.Name != null && x.FileMimeTypeAttribute != null)
+                    .ToDictionary(x => x.Name, x => x.FileMimeTypeAttribute?.MimeType);
 
                 context.ActionArguments.Where(x => x.Value is IFormFile)
                     .Select(x => (x.Key, Value: (IFormFile) x.Value))
