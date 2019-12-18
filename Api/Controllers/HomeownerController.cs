@@ -7,7 +7,7 @@ using Models.Entities.Homeowners;
 namespace Api.Controllers
 {
     [Authorize]
-    [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("Api/[controller]")]
     public class HomeownerController : BasicCrudController<Homeowner>
     {

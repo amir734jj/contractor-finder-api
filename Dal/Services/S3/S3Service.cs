@@ -40,7 +40,7 @@ namespace Dal.Services.S3
         /// <param name="data"></param>
         /// <param name="metadata"></param>
         /// <returns></returns>
-        public async Task<SimpleS3Response> Upload(Guid fileKey, Stream data, IDictionary<string, string> metadata)
+        public async Task<SimpleS3Response> Upload(Guid fileKey, byte[] data, IDictionary<string, string> metadata)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Dal.Services.S3
                     var fileTransferUtilityRequest = new TransferUtilityUploadRequest
                     {
                         Key = $"{_s3ServiceConfig.Prefix}/{fileKey}",
-                        InputStream = data,
+                        InputStream = new MemoryStream(data),
                         BucketName = _s3ServiceConfig.BucketName,
                         CannedACL = S3CannedACL.NoACL
                     };
@@ -167,6 +167,21 @@ namespace Dal.Services.S3
                 
                 return new DownloadS3Response(HttpStatusCode.BadRequest, e.Message);
             }
+        }
+
+        public async Task<List<Guid>> List()
+        {
+            var request = new ListObjectsV2Request
+            {
+                BucketName = _s3ServiceConfig.BucketName,
+                Prefix = _s3ServiceConfig.Prefix
+            };
+
+            var result = await _client.ListObjectsV2Async(request);
+
+            return result.S3Objects?.Select(x => x.Key)
+                .Select(Guid.Parse)
+                .ToList();
         }
     }
 }
