@@ -7,7 +7,7 @@ using Models.ViewModels;
 
 namespace Api.Controllers
 {
-    [Authorize(Roles = "Internal")]
+    [Authorize]
     [ApiController]
     [Route("Api/[controller]")]
     public class ProfileController : Controller

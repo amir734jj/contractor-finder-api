@@ -12,7 +12,7 @@ namespace Models.ViewModels
         
         public string Email { get; set; }
 
-        public RoleEnum Role { get; set; }
+        public string Role { get; set; }
 
         public ProfilePhoto ProfilePhoto { get; set; }
         
@@ -23,7 +23,7 @@ namespace Models.ViewModels
             Firstname = user.Firstname;
             Lastname = user.Lastname;
             Email = user.Email;
-            Role = user.Role;
+            Role = user.Role.ToString();
             ProfilePhoto = user.ProfilePhoto;
         }
     }
