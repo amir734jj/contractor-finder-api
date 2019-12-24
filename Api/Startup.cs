@@ -105,6 +105,65 @@ namespace Api
                 options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             });
 
+            services.AddDbContext<EntityDbContext>(builder =>
+            {
+                if (_env.IsDevelopment())
+                {
+                    builder.UseSqlite(_configuration.GetValue<string>("ConnectionStrings:Sqlite"));
+                }
+                else
+                {
+                    builder.UseNpgsql(
+                        ConnectionStringUrlToResource(_configuration.GetRequiredValue<string>("DATABASE_URL")));
+                }
+            });
+
+            services.AddIdentity<User, UserRole>(opt => opt.User.RequireUniqueEmail = true)
+                .AddEntityFrameworkStores<EntityDbContext>()
+                .AddDefaultTokenProviders();
+
+            var jwtSetting = _configuration
+                .GetSection("JwtSettings")
+                .Get<JwtSettings>();
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(config =>
+                {
+                    config.RequireHttpsMetadata = false;
+                    config.SaveToken = true;
+
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtSetting.Issuer,
+                        ValidAudience = jwtSetting.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key))
+                    };
+                });
+
+            services.AddControllers(opt =>
+                {
+                    opt.EnableEndpointRouting = false;
+
+                    opt.ModelValidatorProviders.Clear();
+
+                    // Not need to have https
+                    opt.RequireHttpsPermanent = false;
+
+                    // Allow anonymous for localhost
+                    if (_env.IsDevelopment())
+                    {
+                        opt.Filters.Add<AllowAnonymousFilter>();
+                    }
+
+                    opt.Filters.Add<CustomExceptionFilterAttribute>();
+                    opt.Filters.Add<FileUploadActionFilterAttribute>();
+                })
+                .AddNewtonsoftJson(option => option.SerializerSettings.Converters.Add(new StringEnumConverter()));
+
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new OpenApiInfo
@@ -132,65 +191,6 @@ namespace Api
                         Scheme = "bearer" // The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
                     });
             });
-
-            services.AddControllers(opt =>
-                {
-                    opt.EnableEndpointRouting = false;
-
-                    opt.ModelValidatorProviders.Clear();
-
-                    // Not need to have https
-                    opt.RequireHttpsPermanent = false;
-
-                    // Allow anonymous for localhost
-                    if (_env.IsDevelopment())
-                    {
-                        opt.Filters.Add<AllowAnonymousFilter>();
-                    }
-
-                    opt.Filters.Add<CustomExceptionFilterAttribute>();
-                    opt.Filters.Add<FileUploadActionFilterAttribute>();
-                })
-                .AddNewtonsoftJson(option => option.SerializerSettings.Converters.Add(new StringEnumConverter()));
-
-            services.AddDbContext<EntityDbContext>(builder =>
-            {
-                if (_env.IsDevelopment())
-                {
-                    builder.UseSqlite(_configuration.GetValue<string>("ConnectionStrings:Sqlite"));
-                }
-                else
-                {
-                    builder.UseNpgsql(
-                        ConnectionStringUrlToResource(_configuration.GetRequiredValue<string>("DATABASE_URL")));
-                }
-            });
-
-            services.AddIdentity<User, UserRole>(opt => opt.User.RequireUniqueEmail = true)
-                .AddEntityFrameworkStores<EntityDbContext>()
-                .AddDefaultTokenProviders();
-            
-            var jwtSetting = _configuration
-                .GetSection("JwtSettings")
-                .Get<JwtSettings>();
-            
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(config =>
-                {
-                    config.RequireHttpsMetadata = false;
-                    config.SaveToken = true;
-
-                    config.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = jwtSetting.Issuer,
-                        ValidAudience = jwtSetting.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Key))
-                    };
-                });
 
             var container = new Container(config =>
             {
@@ -259,7 +259,7 @@ namespace Api
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 // Read and use headers coming from reverse proxy: X-Forwarded-For X-Forwarded-Proto
-                // This is particularly important so that HttpContet.Request.Scheme will be correct behind a SSL terminating proxy
+                // This is particularly important so that HttpContent.Request.Scheme will be correct behind a SSL terminating proxy
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                                    ForwardedHeaders.XForwardedProto
             });
@@ -269,9 +269,9 @@ namespace Api
                 .UseStaticFiles()
                 .UseCookiePolicy()
                 .UseSession()
+                .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
-                .UseRouting()
                 .UseEndpoints(endpoints => endpoints.MapControllers());
 
             Console.WriteLine("Application Started!");
