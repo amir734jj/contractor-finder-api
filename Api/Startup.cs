@@ -67,6 +67,8 @@ namespace Api
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();
+            
             // If environment is localhost, then enable CORS policy, otherwise no cross-origin access
             services.AddCors(options =>
             {
