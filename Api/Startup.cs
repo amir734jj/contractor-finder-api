@@ -12,6 +12,8 @@ using Api.Middlewares;
 using AutoMapper;
 using Dal.Configs;
 using Dal.Utilities;
+using EFCache;
+using EFCache.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +32,7 @@ using Models.Entities.Users;
 using Newtonsoft.Json.Converters;
 using OwaspHeaders.Core.Extensions;
 using OwaspHeaders.Core.Models;
+using StackExchange.Redis;
 using StructureMap;
 using static Api.Utilities.ConnectionStringUtility;
 using static Api.Utilities.AutoMapperBuilder;
@@ -86,16 +89,6 @@ namespace Api
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
-            if (_env.IsDevelopment())
-            {
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                services.AddDistributedRedisCache(opt =>
-                    opt.Configuration = _configuration.GetRequiredValue<string>("REDISCLOUD_URL"));
-            }
-
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.
@@ -121,6 +114,18 @@ namespace Api
             services.AddIdentity<User, UserRole>(opt => opt.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddDefaultTokenProviders();
+            
+            if (_env.IsDevelopment())
+            {
+                EntityFrameworkCache.Initialize(new InMemoryCache());
+            }
+            else
+            {
+                var redisCacheConfig = ConfigurationOptions.Parse(_configuration.GetValue<string>("REDISTOGO_URL"));
+                redisCacheConfig.AbortOnConnectFail = false;
+                
+                EntityFrameworkCache.Initialize(new RedisCache(redisCacheConfig));
+            }
 
             var jwtSetting = _configuration
                 .GetSection("JwtSettings")
