@@ -1,21 +1,21 @@
-﻿using System.Linq;
+using System.Linq;
 using Dal.Abstracts;
 using Dal.Interfaces;
 using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities.Contractors;
+using Models.Entities.Users;
 
-namespace Dal.Dals
+namespace Dal.Crud
 {
-    public class ContractorDal : BasicCrudDalAbstract<Contractor>, IContractorDal
+    public class UserDal : BasicCrudDalAbstract<User>, IUserDal
     {
         private readonly EntityDbContext _dbContext;
-
+        
         /// <summary>
         /// Constructor dependency injection
         /// </summary>
         /// <param name="dbContext"></param>
-        public ContractorDal(EntityDbContext dbContext)
+        public UserDal(EntityDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -33,21 +33,9 @@ namespace Dal.Dals
         /// Returns students entity
         /// </summary>
         /// <returns></returns>
-        protected override DbSet<Contractor> GetDbSet()
+        protected override DbSet<User> GetDbSet()
         {
-            return _dbContext.Contractors;
-        }
-
-        /// <summary>
-        /// Include certain fields
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        protected override IQueryable<Contractor> Include<TQueryable>(
-            TQueryable source)
-        {
-            return source
-                .Include(x => x.UserRef);
+            return _dbContext.Users;
         }
     }
 }

@@ -5,7 +5,7 @@ using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities.Internals;
 
-namespace Dal.Dals
+namespace Dal.Crud
 {
     public class InternalUserDal : BasicCrudDalAbstract<InternalUser>, IInternalUserDal
     {

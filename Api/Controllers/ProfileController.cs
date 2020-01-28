@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,13 @@ namespace Api.Controllers
     public class ProfileController : Controller
     {
         private readonly UserManager<User> _userManager;
+        
+        private readonly IProfileLogic _profileLogic;
 
-        public ProfileController(UserManager<User> userManager)
+        public ProfileController(UserManager<User> userManager, IProfileLogic profileLogic)
         {
             _userManager = userManager;
+            _profileLogic = profileLogic;
         }
 
         [HttpGet]
@@ -25,18 +29,18 @@ namespace Api.Controllers
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             
-            return Ok(new Profile(user));
+            return Ok(new ProfileViewModel(user));
         }
         
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> Update([FromBody] Profile profile)
+        public async Task<IActionResult> Update([FromBody] ProfileViewModel profileViewModel)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            
-            // _userManager.up
-            
-            return Ok(new Profile(user));
+
+            await _profileLogic.Update(user, profileViewModel);
+
+            return Ok(profileViewModel);
         }
     }
 }

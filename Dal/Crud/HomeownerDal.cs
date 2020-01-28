@@ -5,7 +5,7 @@ using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities.Homeowners;
 
-namespace Dal.Dals
+namespace Dal.Crud
 {
     public class HomeownerDal : BasicCrudDalAbstract<Homeowner>, IHomeownerDal
     {

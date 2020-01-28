@@ -27,7 +27,10 @@ namespace Dal.Abstracts
         /// Intercept the IQueryable to include
         /// </summary>
         /// <returns></returns>
-        protected abstract IQueryable<T> Include<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>;
+        protected virtual IQueryable<T> Include<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>
+        {
+            return queryable;
+        }
 
         /// <summary>
         /// Returns all entities
