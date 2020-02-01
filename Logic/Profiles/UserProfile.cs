@@ -11,11 +11,11 @@ namespace Logic.Profiles
         public UserProfile(IS3Service s3Service)
         {
             CreateMap<User, User>()
-                .ForMember(x => x.ProfilePhoto, opt => opt.Ignore())
+                .ForMember(x => x.Photo, opt => opt.Ignore())
                 .AfterMap((source, destination) =>
                 {
-                    source.ProfilePhoto =
-                        ResolveFileRepresentation<ProfilePhoto>(s3Service.GetUri(source.ProfilePhotoKey).Result);
+                    /*source.ProfilePhoto =
+                        ResolveFileRepresentation<ProfilePhoto>(s3Service.GetUri(source.ProfilePhoto).Result);*/
                 });
         }
     }

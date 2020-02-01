@@ -23,6 +23,8 @@ namespace Logic
                 entity.PhoneNumber = profileViewModel.PhoneNumber;
                 entity.Firstname = profileViewModel.Firstname;
                 entity.Lastname = profileViewModel.Lastname;
+                entity.Description = profileViewModel.Description;
+                entity.Photo = profileViewModel.Photo;
             });
         }
     }

@@ -150,7 +150,10 @@ namespace Dal.Services.S3
                 // Copy stream to another stream
                 responseStream.CopyTo(memoryStream);
 
-                return new DownloadS3Response(HttpStatusCode.OK, "Successfully downloaded S3 object", memoryStream.ToArray(), metadata, contentType,
+                return new DownloadS3Response(HttpStatusCode.OK, "Successfully downloaded S3 object",
+                    memoryStream.ToArray(),
+                    metadata,
+                    contentType,
                     title);
             }
             // Catch specific amazon errors
@@ -182,6 +185,29 @@ namespace Dal.Services.S3
             return result.S3Objects?.Select(x => x.Key)
                 .Select(Guid.Parse)
                 .ToList();
+        }
+
+        public async Task<S3DeleteObjectResponse> Delete(Guid keyName)
+        {
+            try
+            {
+                // Build the request with the bucket name and the keyName (name of the file)
+                var deleteObjectResponse = await _client.DeleteObjectAsync(_s3ServiceConfig.BucketName, keyName.ToString());
+
+                return new S3DeleteObjectResponse(HttpStatusCode.OK,$"Response: {deleteObjectResponse.DeleteMarker}");
+            }
+
+            // Catch specific amazon errors
+            catch (AmazonS3Exception e)
+            {
+                return new S3DeleteObjectResponse(e.StatusCode, e.Message);
+            }
+
+            // Catch other errors
+            catch (Exception e)
+            {
+                return new S3DeleteObjectResponse(HttpStatusCode.InternalServerError, e.Message);
+            }
         }
     }
 }

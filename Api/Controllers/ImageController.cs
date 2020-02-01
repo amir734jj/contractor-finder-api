@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Net;
 using System.Threading.Tasks;
@@ -25,30 +26,43 @@ namespace Api.Controllers
             _imageUploadLogic = imageUploadLogic;
         }
 
-        [FileUpload]
-        [HttpPost]
-        [Route("Upload")]
-        public async Task<IActionResult> ImageUpload([FileMimeType("image/*")] IFormFile file,
-            [FromQuery] string description)
+        public class MyClass
         {
+            public IFormFile File { get; set; }
+        }
+        
+        [AllowAnonymous]
+        // [FileUpload]
+        [HttpPost]
+        [Route("upload")]
+        public async Task<IActionResult> ImageUpload(IFormFile file)
+        {
+            if (file == null)
+            {
+                return BadRequest("Failed to upload file");
+            }
+
             var response = await _imageUploadLogic.Upload(
                 await file.ToByteArray(),
-                ImmutableDictionary<string, string>.Empty
-                    .Add(ImageMetadataKey.Description, description)
+                new Dictionary<string, string> { [ImageMetadataKey.Description] = "" }
             );
 
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> DownloadImage([FromRoute] Guid id)
         {
             var result = await _imageUploadLogic.Download(id);
 
-            return result.Status == HttpStatusCode.OK
-                ? (IActionResult) File(result.Data, result?.ContentType, result.Name)
-                : BadRequest(result.Message);
+            if (result.Status == HttpStatusCode.OK)
+            {
+                return File(result.Data, result.ContentType, result.Name);
+            }
+
+            return BadRequest(result.Message);
         }
         
         [HttpGet]
@@ -65,6 +79,15 @@ namespace Api.Controllers
         public async Task<IActionResult> ListImages()
         {
             var result = await _imageUploadLogic.List();
+
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        [Route("{id}/delete")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var result = await _imageUploadLogic.Delete(id);
 
             return Ok(result);
         }

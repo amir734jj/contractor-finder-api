@@ -17,5 +17,7 @@ namespace Dal.Interfaces
         Task<DownloadS3Response> Download(Guid keyName);
 
         Task<List<Guid>> List();
+
+        Task<S3DeleteObjectResponse> Delete(Guid keyName);
     }
 }

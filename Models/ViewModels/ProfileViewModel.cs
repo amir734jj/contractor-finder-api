@@ -1,3 +1,4 @@
+using System;
 using Models.Entities.Common;
 using Models.Entities.Users;
 using Models.Enums;
@@ -18,19 +19,21 @@ namespace Models.ViewModels
 
         public string Role { get; set; }
 
-        public ProfilePhoto ProfilePhoto { get; set; }
+        public Guid? Photo { get; set; }
         
         public ProfileViewModel() { }
         
         public ProfileViewModel(User user) : this()
         {
+            if (user == null) return;
+            
             Firstname = user.Firstname;
             Lastname = user.Lastname;
             Email = user.Email;
             Role = user.Role.ToString();
             PhoneNumber = user.PhoneNumber;
             Description = user.Description;
-            ProfilePhoto = user.ProfilePhoto;
+            Photo = user.Photo;
         }
     }
 }

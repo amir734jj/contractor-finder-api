@@ -23,12 +23,10 @@ namespace Models.Entities.Users
 
         /// <summary>
         /// Keys to lookup from S3
+        /// 
+        /// Used nullable Guid to avoid 0000-0000-... being as the default value
         /// </summary>
-        [JsonIgnore]
-        public Guid ProfilePhotoKey { get; set; }
-
-        [NotMapped]
-        public ProfilePhoto ProfilePhoto { get; set; }
+        public Guid? Photo { get; set; }
 
         [JsonIgnore]
         public Contractor ContractorRef { get; set; }

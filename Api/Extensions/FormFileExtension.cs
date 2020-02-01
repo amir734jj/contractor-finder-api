@@ -8,6 +8,12 @@ namespace Api.Extensions
     {
         public static async Task<byte[]> ToByteArray(this IFormFile formFile)
         {
+            // Short-circuit
+            if (formFile == null)
+            {
+                return new byte[] { };
+            }
+            
             await using var data = new MemoryStream();
             await formFile.CopyToAsync(data);
 
