@@ -2,6 +2,9 @@ namespace Models.Constants
 {
     public static class ImageMetadataKey
     {
-        public static string Description = "Description";
+        public const string Description = "Description";
+
+        public const string Name = "Name";
+
     }
 }

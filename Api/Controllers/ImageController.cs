@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Net;
 using System.Threading.Tasks;
-using Api.Attributes;
 using Api.Extensions;
 using Api.Middlewares.FileUpload;
 using Logic.Interfaces;
@@ -11,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Constants;
+using Models.ViewModels;
 
 namespace Api.Controllers
 {
@@ -26,16 +25,32 @@ namespace Api.Controllers
             _imageUploadLogic = imageUploadLogic;
         }
 
-        public class MyClass
+        //[FileUpload]
+        [HttpPost]
+        [Route("upload/base64")]
+        public async Task<IActionResult> ImageUploadBase65([FromBody] Base64UploadViewModel file)
         {
-            public IFormFile File { get; set; }
+            if (file?.Base64?.Length == null)
+            {
+                return BadRequest("Failed to upload file");
+            }
+
+            var response = await _imageUploadLogic.Upload(
+                Convert.FromBase64String(file.Base64),
+                new Dictionary<string, string>
+                {
+                    [ImageMetadataKey.Description] = file.Description,
+                    [ImageMetadataKey.Name] = file.Name
+                }
+            );
+
+            return Ok(response);
         }
-        
-        [AllowAnonymous]
-        // [FileUpload]
+
+        [FileUpload]
         [HttpPost]
         [Route("upload")]
-        public async Task<IActionResult> ImageUpload(IFormFile file)
+        public async Task<IActionResult> ImageUpload([FromForm] IFormFile file, [FromQuery] string description)
         {
             if (file == null)
             {
@@ -44,7 +59,7 @@ namespace Api.Controllers
 
             var response = await _imageUploadLogic.Upload(
                 await file.ToByteArray(),
-                new Dictionary<string, string> { [ImageMetadataKey.Description] = "" }
+                new Dictionary<string, string> { [ImageMetadataKey.Description] = description }
             );
 
             return Ok(response);
