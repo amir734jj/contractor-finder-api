@@ -74,8 +74,9 @@ namespace Api
             {
                 options.AddPolicy("CorsPolicy", builder => builder
                     .AllowAnyOrigin()
+                    .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowAnyHeader());
+                    .AllowCredentials());
             });
 
             // Add framework services
@@ -244,7 +245,13 @@ namespace Api
         public void Configure(IApplicationBuilder app)
         {
             // Add SecureHeadersMiddleware to the pipeline
-            app.UseSecureHeadersMiddleware(_configuration.Get<SecureHeadersMiddlewareConfiguration>());
+            // See: https://github.com/GaProgMan/OwaspHeaders.Core
+            app.UseSecureHeadersMiddleware(SecureHeadersMiddlewareBuilder
+                .CreateBuilder()
+                .UseHsts()
+                .UseXFrameOptions()
+                .UseXSSProtection()
+                .Build());
 
             app.UseCors("CorsPolicy")
                 .UseEnableRequestRewind()
