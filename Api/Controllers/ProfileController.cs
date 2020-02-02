@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Users;
@@ -8,6 +9,7 @@ using Models.ViewModels;
 
 namespace Api.Controllers
 {
+    [EnableCors]
     [Authorize]
     [ApiController]
     [Route("Api/[controller]")]

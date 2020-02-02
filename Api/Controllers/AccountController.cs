@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Api.Configs;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -18,6 +19,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Api.Controllers
 {
+    [EnableCors]
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
