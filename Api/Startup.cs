@@ -246,10 +246,9 @@ namespace Api
         {
             // Add SecureHeadersMiddleware to the pipeline
             // See: https://github.com/GaProgMan/OwaspHeaders.Core
-            app.UseSecureHeadersMiddleware(SecureHeadersMiddlewareBuilder
-                .CreateBuilder()
-                .UseHsts()
-                .Build());
+            //app.UseSecureHeadersMiddleware(SecureHeadersMiddlewareBuilder
+            //    .CreateBuilder()
+            //    .Build());
 
             app.UseCors("CorsPolicy")
                 .UseEnableRequestRewind()
