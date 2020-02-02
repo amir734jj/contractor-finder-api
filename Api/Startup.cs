@@ -250,8 +250,7 @@ namespace Api
             //    .CreateBuilder()
             //    .Build());
 
-            app.UseCors("CorsPolicy")
-                .UseEnableRequestRewind()
+            app.UseEnableRequestRewind()
                 .UseDeveloperExceptionPage();
 
             if (_env.IsDevelopment())
@@ -281,6 +280,7 @@ namespace Api
                 .UseCookiePolicy()
                 .UseSession()
                 .UseRouting()
+                .UseCors("CorsPolicy")
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseEndpoints(endpoints => endpoints.MapControllers());
