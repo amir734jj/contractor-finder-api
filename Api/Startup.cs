@@ -249,8 +249,6 @@ namespace Api
             app.UseSecureHeadersMiddleware(SecureHeadersMiddlewareBuilder
                 .CreateBuilder()
                 .UseHsts()
-                .UseXFrameOptions()
-                .UseXSSProtection()
                 .Build());
 
             app.UseCors("CorsPolicy")
