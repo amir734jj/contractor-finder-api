@@ -84,8 +84,8 @@ namespace Api
             services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
 
             // Add our Config object so it can be injected
-            services.Configure<SecureHeadersMiddlewareConfiguration>(
-                _configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
+            //services.Configure<SecureHeadersMiddlewareConfiguration>(
+            //    _configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
 
             services.AddLogging();
 
