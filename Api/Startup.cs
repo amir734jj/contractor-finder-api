@@ -293,7 +293,7 @@ namespace Api
                 .UseCors("CorsPolicy")
                 .UseAuthentication()
                 .UseAuthorization()
-                .UseEndpoints(endpoints => endpoints.MapControllers());
+                .UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
 
             Console.WriteLine("Application Started!");
         }
