@@ -1,8 +1,6 @@
 using AutoMapper;
 using Dal.Interfaces;
-using Models.Entities.Common;
 using Models.Entities.Users;
-using static Logic.Utilities.FileRepresentationUtility;
 
 namespace Logic.Profiles
 {

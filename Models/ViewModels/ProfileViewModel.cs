@@ -1,7 +1,5 @@
 using System;
-using Models.Entities.Common;
 using Models.Entities.Users;
-using Models.Enums;
 
 namespace Models.ViewModels
 {

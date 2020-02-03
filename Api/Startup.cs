@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Amazon;
@@ -30,8 +31,6 @@ using Microsoft.OpenApi.Models;
 using Models.Constants;
 using Models.Entities.Users;
 using Newtonsoft.Json.Converters;
-using OwaspHeaders.Core.Extensions;
-using OwaspHeaders.Core.Models;
 using StackExchange.Redis;
 using StructureMap;
 using static Api.Utilities.ConnectionStringUtility;
@@ -67,6 +66,8 @@ namespace Api
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
+
             services.AddDistributedMemoryCache();
             
             // If environment is localhost, then enable CORS policy, otherwise no cross-origin access
@@ -171,6 +172,14 @@ namespace Api
                 })
                 .AddNewtonsoftJson(option => option.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                                           ForwardedHeaders.XForwardedProto;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new OpenApiInfo
@@ -207,7 +216,7 @@ namespace Api
                     _configuration.GetRequiredValue<string>("CLOUDCUBE_URL")
                 );
 
-                var prefix = new Uri(url).Segments[1];
+                var prefix = new Uri(url).Segments.FirstOrDefault() ?? throw new Exception("S3 url is malformed");
                 const string bucketName = "cloud-cube";
 
                 // Generally bad practice
@@ -264,6 +273,8 @@ namespace Api
                 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
             }
 
+            app.UseHttpsRedirection();
+            
             // Not necessary for this workshop but useful when running behind kubernetes
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

@@ -3,7 +3,6 @@ using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Contractors;
-using Models.Enums;
 
 namespace Api.Controllers
 {

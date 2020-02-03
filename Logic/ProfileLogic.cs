@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Logic.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Models.Entities.Users;
 using Models.ViewModels;
 
