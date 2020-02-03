@@ -75,8 +75,7 @@ namespace Api
                 options.AddPolicy("CorsPolicy", builder => builder
                     .AllowAnyOrigin()
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials());
+                    .AllowAnyMethod());
             });
 
             // Add framework services
