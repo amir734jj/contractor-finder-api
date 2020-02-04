@@ -28,7 +28,7 @@ namespace Api.Controllers
         //[FileUpload]
         [HttpPost]
         [Route("upload/base64")]
-        public async Task<IActionResult> ImageUploadBase65([FromBody] Base64UploadViewModel file)
+        public async Task<IActionResult> ImageUploadBase64([FromBody] Base64UploadViewModel file)
         {
             if (file?.Base64?.Length == null)
             {

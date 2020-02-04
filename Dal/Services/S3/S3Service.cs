@@ -53,7 +53,8 @@ namespace Dal.Services.S3
                         Key = $"{_s3ServiceConfig.Prefix}/{fileKey}",
                         InputStream = new MemoryStream(data),
                         BucketName = _s3ServiceConfig.BucketName,
-                        CannedACL = S3CannedACL.PublicRead
+                        CannedACL = S3CannedACL.Private,
+                        AutoCloseStream = true
                     };
 
                     foreach (var (key, value) in metadata)
