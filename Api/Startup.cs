@@ -273,8 +273,6 @@ namespace Api
                 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
             }
 
-            app.UseHttpsRedirection();
-            
             // Not necessary for this workshop but useful when running behind kubernetes
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
