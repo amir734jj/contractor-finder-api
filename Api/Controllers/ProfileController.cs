@@ -9,7 +9,6 @@ using Models.ViewModels;
 
 namespace Api.Controllers
 {
-    [EnableCors]
     [Authorize]
     [ApiController]
     [Route("Api/[controller]")]

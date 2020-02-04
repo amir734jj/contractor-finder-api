@@ -19,7 +19,6 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Api.Controllers
 {
-    [EnableCors]
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
