@@ -23,14 +23,7 @@ namespace Models.Entities.Projects
         [JsonIgnore]
         public Homeowner Homeowner { get; set; }
 
-        /// <summary>
-        /// Keys to lookup from S3
-        /// </summary>
-        [JsonIgnore]
         [Column(TypeName = "jsonb")]
-        public HashSet<Guid> ProjectPhotosKeys { get; set; }
-
-        [NotMapped]
         public List<ProjectPhoto> ProjectPhotos { get; set; }
     }
 }

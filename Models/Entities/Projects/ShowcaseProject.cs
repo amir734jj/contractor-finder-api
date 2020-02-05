@@ -16,14 +16,7 @@ namespace Models.Entities.Projects
 
         public string Description { get; set; }
 
-        /// <summary>
-        /// Keys to lookup from S3
-        /// </summary>
-        [JsonIgnore]
         [Column(TypeName = "jsonb")]
-        public HashSet<Guid> ProjectPhotosKeys { get; set; }
-
-        [NotMapped]
         public List<ProjectPhoto> ProjectPhotos { get; set; }
 
         [JsonIgnore]
