@@ -70,7 +70,7 @@ namespace Api.Controllers
             // Create the role if not exist
             if (!await _roleManager.RoleExistsAsync(role.ToString()))
             {
-                identityResults.Add(await _roleManager.CreateAsync(new UserRole {Name = role.ToString()}));
+                identityResults.Add(await _roleManager.CreateAsync(new UserRole(role.ToString())));
             }
 
             // Register the user to the role

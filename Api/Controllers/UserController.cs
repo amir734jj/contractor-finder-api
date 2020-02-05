@@ -1,12 +1,13 @@
 using Api.Abstracts;
+using Api.Attributes;
 using Logic.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Users;
+using static Models.Enums.RoleEnum;
 
 namespace Api.Controllers
 {
-    [Authorize(Roles = "Internal")]
+    [RoleAuthorize(Internal)]
     [ApiController]
     [Route("Api/[controller]")]
     public class UserController : BasicCrudController<User>

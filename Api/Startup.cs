@@ -117,7 +117,7 @@ namespace Api
             services.AddIdentity<User, UserRole>(opt => opt.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddDefaultTokenProviders();
-            
+
             if (_env.IsDevelopment())
             {
                 EntityFrameworkCache.Initialize(new InMemoryCache());

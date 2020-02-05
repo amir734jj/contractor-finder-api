@@ -1,12 +1,10 @@
 using Api.Abstracts;
 using Logic.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Contractors;
 
 namespace Api.Controllers
 {
-    [Authorize(Roles = "Internal,Contractor,Homeowner")]
     [ApiController]
     [Route("Api/[controller]")]
     public class ContractorController : BasicCrudController<Contractor>
