@@ -12,6 +12,8 @@ using Api.Middlewares.FileUpload;
 using Api.Middlewares;
 using AutoMapper;
 using Dal.Configs;
+using Dal.Interfaces;
+using Dal.Services.S3;
 using Dal.Utilities;
 using EFCache;
 using EFCache.Redis;
@@ -126,7 +128,8 @@ namespace Api
             else
             {
                 var redisCacheConfig = ConfigurationOptions.Parse(_configuration.GetValue<string>("REDISTOGO_URL"));
-                redisCacheConfig.AbortOnConnectFail = false;
+
+                redisCacheConfig.AbortOnConnectFail = false;    // Needed otherwise redis client will fail
                 
                 EntityFrameworkCache.Initialize(new RedisCache(redisCacheConfig));
             }
@@ -210,21 +213,28 @@ namespace Api
 
             var container = new Container(config =>
             {
-                var (accessKeyId, secretAccessKey, url) = (
-                    _configuration.GetRequiredValue<string>("CLOUDCUBE_ACCESS_KEY_ID"),
-                    _configuration.GetRequiredValue<string>("CLOUDCUBE_SECRET_ACCESS_KEY"),
-                    _configuration.GetRequiredValue<string>("CLOUDCUBE_URL")
-                );
+                if (_env.IsDevelopment())
+                {
+                    config.For<IS3Service>().Use<InMemoryS3>().Singleton();
+                }
+                else
+                {
+                    var (accessKeyId, secretAccessKey, url) = (
+                        _configuration.GetRequiredValue<string>("CLOUDCUBE_ACCESS_KEY_ID"),
+                        _configuration.GetRequiredValue<string>("CLOUDCUBE_SECRET_ACCESS_KEY"),
+                        _configuration.GetRequiredValue<string>("CLOUDCUBE_URL")
+                    );
 
-                var prefix = new Uri(url).Segments.Skip(1).FirstOrDefault() ?? throw new Exception("S3 url is malformed");
-                const string bucketName = "cloud-cube";
+                    var prefix = new Uri(url).Segments.Skip(1).FirstOrDefault() ?? throw new Exception("S3 url is malformed");
+                    const string bucketName = "cloud-cube";
 
-                // Generally bad practice
-                var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
+                    // Generally bad practice
+                    var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
 
-                // Create S3 client
-                config.For<IAmazonS3>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast1));
-                config.For<S3ServiceConfig>().Use(new S3ServiceConfig(bucketName, prefix));
+                    // Create S3 client
+                    config.For<IAmazonS3>().Use(() => new AmazonS3Client(credentials, RegionEndpoint.USEast1));
+                    config.For<S3ServiceConfig>().Use(new S3ServiceConfig(bucketName, prefix));
+                }
 
                 // Register stuff in container, using the StructureMap APIs...
                 config.Scan(_ =>
@@ -241,7 +251,7 @@ namespace Api
                 config.For<IMapper>().Use(ctx => ResolveMapper(ctx, Assembly.Load("Logic"))).Singleton();
             });
 
-            container.AssertConfigurationIsValid();
+            // container.AssertConfigurationIsValid();
 
             return container.GetInstance<IServiceProvider>();
         }
