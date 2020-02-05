@@ -115,6 +115,7 @@ namespace Api
             });
 
             services.AddIdentity<User, UserRole>(opt => opt.User.RequireUniqueEmail = true)
+                .AddRoles<UserRole>()
                 .AddEntityFrameworkStores<EntityDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -134,8 +135,7 @@ namespace Api
                 .GetSection("JwtSettings")
                 .Get<JwtSettings>();
 
-            services.AddAuthentication(options =>
-                {
+            services.AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })

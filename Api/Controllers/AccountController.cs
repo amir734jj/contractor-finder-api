@@ -6,7 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Api.Configs;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -41,9 +40,12 @@ namespace Api.Controllers
         [SwaggerOperation("AccountInfo")]
         public async Task<IActionResult> Index()
         {
-            return User.Identity.IsAuthenticated
-                ? Ok(await _userManager.FindByEmailAsync(User.Identity.Name))
-                : Ok(new { });
+            if (User.Identity.IsAuthenticated)
+            {
+                return Ok(await _userManager.FindByEmailAsync(User.Identity.Name));
+            }
+
+            return Ok(new { });
         }
 
         [HttpPost]
@@ -76,9 +78,12 @@ namespace Api.Controllers
             // Register the user to the role
             identityResults.Add(await _userManager.AddToRoleAsync(user, role.ToString()));
 
-            return identityResults.Aggregate(true, (b, result) => b && result.Succeeded)
-                ? (IActionResult) Ok("Successfully registered!")
-                : BadRequest("Failed to register!");
+            if (identityResults.Aggregate(true, (b, result) => b && result.Succeeded))
+            {
+                return Ok("Successfully registered!");
+            }
+
+            return BadRequest("Failed to register!");
         }
 
         [HttpPost]
