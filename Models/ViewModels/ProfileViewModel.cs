@@ -1,5 +1,6 @@
 using System;
 using Models.Entities.Users;
+using Models.Enums;
 
 namespace Models.ViewModels
 {
@@ -15,7 +16,7 @@ namespace Models.ViewModels
         
         public string Description { get; set; }
 
-        public string Role { get; set; }
+        public RoleEnum Role { get; set; }
 
         public Guid? Photo { get; set; }
         
@@ -28,7 +29,7 @@ namespace Models.ViewModels
             Firstname = user.Firstname;
             Lastname = user.Lastname;
             Email = user.Email;
-            Role = user.Role.ToString();
+            Role = user.Role;
             PhoneNumber = user.PhoneNumber;
             Description = user.Description;
             Photo = user.Photo;
