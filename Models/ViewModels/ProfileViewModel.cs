@@ -1,4 +1,7 @@
 using System;
+using Models.Entities.Contractors;
+using Models.Entities.Homeowners;
+using Models.Entities.Internals;
 using Models.Entities.Users;
 using Models.Enums;
 
@@ -20,6 +23,12 @@ namespace Models.ViewModels
 
         public Guid? Photo { get; set; }
         
+        public Contractor Contractor { get; set; }
+        
+        public InternalUser InternalUser { get; set; }
+        
+        public Homeowner Homeowner { get; set; }
+        
         public ProfileViewModel() { }
         
         public ProfileViewModel(User user) : this()
@@ -33,6 +42,10 @@ namespace Models.ViewModels
             PhoneNumber = user.PhoneNumber;
             Description = user.Description;
             Photo = user.Photo;
+
+            Contractor = user.ContractorRef;
+            InternalUser = user.InternalUserRef;
+            Homeowner = user.HomeownerRef;
         }
     }
 }

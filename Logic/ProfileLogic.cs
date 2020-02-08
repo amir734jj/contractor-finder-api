@@ -24,6 +24,8 @@ namespace Logic
                 entity.Lastname = profileViewModel.Lastname;
                 entity.Description = profileViewModel.Description;
                 entity.Photo = profileViewModel.Photo;
+
+                entity.ContractorRef.Speciality = profileViewModel.Contractor?.Speciality;
             });
         }
     }
