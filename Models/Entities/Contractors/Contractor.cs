@@ -12,13 +12,13 @@ namespace Models.Entities.Contractors
     {
         public Guid Id { get; set; }
 
-        public List<ShowcaseProject> ShowcaseProjects { get; set; }
+        public List<ShowcaseProject> ShowcaseProjects { get; set; } = new List<ShowcaseProject>();
 
-        public List<ProjectMilestone> HomeownerProjects { get; set; }
+        public List<ProjectMilestone> HomeownerProjects { get; set; } = new List<ProjectMilestone>();
 
         public User UserRef { get; set; }
 
         [Column(TypeName = "jsonb")]
-        public List<ContractorSpecialityEnum> Speciality { get; set; }
+        public List<ContractorSpecialityEnum> Speciality { get; set; } = new List<ContractorSpecialityEnum>();
     }
 }

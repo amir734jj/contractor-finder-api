@@ -17,7 +17,7 @@ namespace Models.Entities.Projects
         public string Description { get; set; }
 
         [Column(TypeName = "jsonb")]
-        public List<ProjectPhoto> ProjectPhotos { get; set; }
+        public List<ProjectPhoto> ProjectPhotos { get; set; } = new List<ProjectPhoto>();
 
         [JsonIgnore]
         public Contractor Contractor { get; set; }

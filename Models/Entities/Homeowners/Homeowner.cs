@@ -13,7 +13,7 @@ namespace Models.Entities.Homeowners
 
         public string Address { get; set; }
         
-        public List<HomeownerProject> Projects { get; set; }
+        public List<HomeownerProject> Projects { get; set; } = new List<HomeownerProject>();
         
         [JsonIgnore]
         public User UserRef { get; set; }
