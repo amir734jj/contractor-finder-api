@@ -1,3 +1,4 @@
+using System.Linq;
 using Dal.Abstracts;
 using Dal.Interfaces;
 using Dal.Utilities;
@@ -35,6 +36,20 @@ namespace Dal.Crud
         protected override DbSet<User> GetDbSet()
         {
             return _dbContext.Users;
+        }
+
+        /// <summary>
+        /// Include certain fields
+        /// </summary>
+        /// <param name="source"></param>
+        /// <typeparam name="TQueryable"></typeparam>
+        /// <returns></returns>
+        protected override IQueryable<User> Include<TQueryable>(TQueryable source)
+        {
+            return source
+                .Include(x => x.ContractorRef)
+                .Include(x => x.HomeownerRef)
+                .Include(x => x.InternalUserRef);
         }
     }
 }

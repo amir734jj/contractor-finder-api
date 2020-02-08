@@ -11,14 +11,7 @@ namespace Logic.Profiles
     {
         public ProjectMilestoneProfile(IS3Service s3Service)
         {
-            CreateMap<ProjectMilestone, ProjectMilestone>()
-                .ForMember(x => x.ProjectPhotos, opt => opt.Ignore())
-                .AfterMap((source, destination) =>
-                {
-                    destination.ProjectPhotos = source.ProjectPhotosKeys
-                        .Select(x => ResolveFileRepresentation<ProjectPhoto>(s3Service.GetUri(x).Result))
-                        .ToList();
-                });
+            CreateMap<ProjectMilestone, ProjectMilestone>();
         }
     }
 }

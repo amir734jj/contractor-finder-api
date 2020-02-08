@@ -16,11 +16,14 @@ namespace Api.Controllers
         private readonly UserManager<User> _userManager;
         
         private readonly IProfileLogic _profileLogic;
+        
+        private readonly IUserLogic _userLogic;
 
-        public ProfileController(UserManager<User> userManager, IProfileLogic profileLogic)
+        public ProfileController(UserManager<User> userManager, IProfileLogic profileLogic, IUserLogic userLogic)
         {
             _userManager = userManager;
             _profileLogic = profileLogic;
+            _userLogic = userLogic;
         }
 
         [HttpGet]
@@ -28,8 +31,10 @@ namespace Api.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+
+            var userWithNonNullReferenceProperties = await _userLogic.Get(user.Id);
             
-            return Ok(new ProfileViewModel(user));
+            return Ok(new ProfileViewModel(userWithNonNullReferenceProperties));
         }
         
         [HttpPost]

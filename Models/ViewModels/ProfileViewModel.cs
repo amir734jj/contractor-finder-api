@@ -1,5 +1,9 @@
 using System;
+using Models.Entities.Contractors;
+using Models.Entities.Homeowners;
+using Models.Entities.Internals;
 using Models.Entities.Users;
+using Models.Enums;
 
 namespace Models.ViewModels
 {
@@ -15,9 +19,15 @@ namespace Models.ViewModels
         
         public string Description { get; set; }
 
-        public string Role { get; set; }
+        public RoleEnum Role { get; set; }
 
         public Guid? Photo { get; set; }
+        
+        public Contractor Contractor { get; set; }
+        
+        public InternalUser InternalUser { get; set; }
+        
+        public Homeowner Homeowner { get; set; }
         
         public ProfileViewModel() { }
         
@@ -28,10 +38,14 @@ namespace Models.ViewModels
             Firstname = user.Firstname;
             Lastname = user.Lastname;
             Email = user.Email;
-            Role = user.Role.ToString();
+            Role = user.Role;
             PhoneNumber = user.PhoneNumber;
             Description = user.Description;
             Photo = user.Photo;
+
+            Contractor = user.ContractorRef;
+            InternalUser = user.InternalUserRef;
+            Homeowner = user.HomeownerRef;
         }
     }
 }

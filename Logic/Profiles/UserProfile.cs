@@ -8,13 +8,7 @@ namespace Logic.Profiles
     {
         public UserProfile(IS3Service s3Service)
         {
-            CreateMap<User, User>()
-                .ForMember(x => x.Photo, opt => opt.Ignore())
-                .AfterMap((source, destination) =>
-                {
-                    /*source.ProfilePhoto =
-                        ResolveFileRepresentation<ProfilePhoto>(s3Service.GetUri(source.ProfilePhoto).Result);*/
-                });
+            CreateMap<User, User>();
         }
     }
 }
