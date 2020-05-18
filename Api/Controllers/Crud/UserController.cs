@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Users;
 using static Models.Enums.RoleEnum;
 
-namespace Api.Controllers
+namespace Api.Controllers.Crud
 {
     [RoleAuthorize(Internal)]
     [ApiController]

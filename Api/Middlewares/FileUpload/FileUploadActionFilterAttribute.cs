@@ -45,8 +45,8 @@ namespace Api.Middlewares.FileUpload
                     var regex = new Regex(mimeTypeTable[key]);
 
                     var result = MimeTypeTable.DefaultMapping.Where(x => regex.IsMatch(x.Value))
-                        .Select(x => (Extension: x.Key, MimeType: x.Value))
-                        .Any(x => formFile.ContentType == x.MimeType && formFile.FileName.EndsWith(x.Extension));
+                        .Select(y => (Extension: y.Key, MimeType: y.Value))
+                        .Any(y => formFile.ContentType == y.MimeType && formFile.FileName.EndsWith(y.Extension));
 
                     if (!result)
                     {

@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Homeowners;
 
-namespace Api.Controllers
+namespace Api.Controllers.Crud
 {
     [Authorize]
-    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("Api/[controller]")]
     public class HomeownerController : BasicCrudController<Homeowner>
     {

@@ -24,21 +24,12 @@ namespace Dal.Abstracts
         protected abstract DbSet<T> GetDbSet();
 
         /// <summary>
-        /// Intercept the IQueryable to include
-        /// </summary>
-        /// <returns></returns>
-        protected virtual IQueryable<T> Include<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>
-        {
-            return queryable;
-        }
-
-        /// <summary>
         /// Returns all entities
         /// </summary>
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return await Include(GetDbSet()).ToListAsync();
+            return await Intercept(GetDbSet()).ToListAsync();
         }
 
         /// <summary>
@@ -48,7 +39,7 @@ namespace Dal.Abstracts
         /// <returns></returns>
         public virtual async Task<T> Get(Guid id)
         {
-            return await Include(GetDbSet()).FirstOrDefaultAsync(x => x.Id == id);
+            return await Intercept(GetDbSet()).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         /// <summary>
@@ -59,9 +50,9 @@ namespace Dal.Abstracts
         public virtual async Task<T> Save(T instance)
         {
             await GetDbSet().AddAsync(instance);
-
+            
             await GetDbContext().SaveChangesAsync();
-
+            
             return instance;
         }
 
@@ -76,11 +67,7 @@ namespace Dal.Abstracts
 
             if (entity != null)
             {
-                // Remove from persistence
                 GetDbSet().Remove(entity);
-                
-                // Remove form DbContext
-                GetDbContext().Remove(entity);
                 
                 await GetDbContext().SaveChangesAsync();
                 
@@ -91,7 +78,7 @@ namespace Dal.Abstracts
         }
 
         /// <summary>
-        /// Handles update
+        /// Updates entity given the id and new instance
         /// </summary>
         /// <param name="id"></param>
         /// <param name="dto"></param>
@@ -99,49 +86,37 @@ namespace Dal.Abstracts
         public virtual async Task<T> Update(Guid id, T dto)
         {
             var entity = await Get(id);
-            
+
             if (entity != null)
             {
-                // Update fields
-                Mapper.Map(dto).Over(entity);
-
-                // Save and dispose
+                UpdateEntity(entity, dto);
+                
                 await GetDbContext().SaveChangesAsync();
 
-                // Returns the updated entity
                 return entity;
             }
 
-            // Not found
             return null;
         }
 
         /// <summary>
-        /// Handles manual update
+        /// Intercept the IQueryable to include
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="modifyAction"></param>
         /// <returns></returns>
-        public virtual async Task<T> Update(Guid id, Action<T> modifyAction)
+        protected virtual IQueryable<T> Intercept<TQueryable>(TQueryable queryable) where TQueryable : IQueryable<T>
         {
-            var entity = await Get(id);
-                
-            if (entity != null)
-            {
-                // Update
-                modifyAction(entity);
+            return queryable;
+        }
 
-                GetDbSet().Update(entity);
-                
-                // Save and dispose
-                await GetDbContext().SaveChangesAsync();
-
-                // Returns the updated entity
-                return entity;
-            }
-
-            // Not found
-            return null;
+        /// <summary>
+        /// Default update method
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        protected virtual void UpdateEntity(T entity, T dto)
+        {
+            Mapper.Map(dto).Over(entity);
         }
     }
 }

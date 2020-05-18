@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Dal.Abstracts;
+using Dal.Extensions;
 using Dal.Interfaces;
 using Dal.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -38,17 +39,17 @@ namespace Dal.Crud
             return _dbContext.Homeowners;
         }
 
-        /// <summary>
-        /// Include certain fields
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        protected override IQueryable<Homeowner> Include<TQueryable>(
-            TQueryable source)
+        protected override IQueryable<Homeowner> Intercept<TQueryable>(TQueryable queryable)
         {
-            return source
+            return queryable
                 .Include(x => x.UserRef)
                 .Include(x => x.Projects);
+        }
+
+        protected override void UpdateEntity(Homeowner entity, Homeowner dto)
+        {
+            entity.Address = dto.Address;
+            entity.Projects = entity.Projects.IdAwareUpdate(dto.Projects, x => x.Id);
         }
     }
 }

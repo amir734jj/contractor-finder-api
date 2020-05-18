@@ -1,15 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Models.Entities.Common;
 using Models.Entities.Homeowners;
-using Models.Interfaces;
 
 namespace Models.Entities.Projects
 {
-    public class HomeownerProject : IEntity
+    public class HomeownerProject : Entity
     {
-        public Guid Id { get; set; }
-
         public string Title { get; set; }
 
         public string Description { get; set; }

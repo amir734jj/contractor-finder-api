@@ -6,9 +6,10 @@
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AgileObjects.AgileMapper" Version="1.5.0" />
-    <PackageReference Include="AWSSDK.S3" Version="3.3.108.4" />
-    <PackageReference Include="EFCache.Redis" Version="2019.3.11.1" />
+    <PackageReference Include="AgileObjects.AgileMapper" Version="1.6.0" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.110.70" />
+    <PackageReference Include="EFCache.Redis" Version="2020.6.1.1" />
+    <PackageReference Include="FluentFTP" Version="32.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
@@ -17,6 +18,6 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.1.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.112" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.112.2" />
   </ItemGroup>
 </Project>

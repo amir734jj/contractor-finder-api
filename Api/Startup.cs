@@ -10,10 +10,9 @@ using Api.Configs;
 using Api.Extensions;
 using Api.Middlewares.FileUpload;
 using Api.Middlewares;
-using AutoMapper;
 using Dal.Configs;
 using Dal.Interfaces;
-using Dal.Services.S3;
+using Dal.Services.InMemory;
 using Dal.Utilities;
 using EFCache;
 using EFCache.Redis;
@@ -36,7 +35,6 @@ using Newtonsoft.Json.Converters;
 using StackExchange.Redis;
 using StructureMap;
 using static Api.Utilities.ConnectionStringUtility;
-using static Api.Utilities.AutoMapperBuilder;
 
 namespace Api
 {
@@ -73,13 +71,11 @@ namespace Api
             services.AddDistributedMemoryCache();
             
             // If environment is localhost, then enable CORS policy, otherwise no cross-origin access
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", builder => builder
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod());
-            });
+            services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder
+                .WithOrigins(_configuration.GetSection("TrustedSpaUrls").Get<string[]>())
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()));
 
             // Add framework services
             // Add functionality to inject IOptions<T>
@@ -137,7 +133,11 @@ namespace Api
             var jwtSetting = _configuration
                 .GetSection("JwtSettings")
                 .Get<JwtSettings>();
-
+            
+            var ftpSetting = _configuration
+                .GetSection("FtpSettings")
+                .Get<FtpServiceConfig>();
+            
             services.AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -213,9 +213,12 @@ namespace Api
 
             var container = new Container(config =>
             {
+                config.For<FtpServiceConfig>().Use(ftpSetting);
+                config.For<JwtSettings>().Use(jwtSetting);
+
                 if (_env.IsDevelopment())
                 {
-                    config.For<IS3Service>().Use<InMemoryS3>().Singleton();
+                    config.For<IFileService>().Use<InMemoryFileService>().Singleton();
                 }
                 else
                 {
@@ -247,8 +250,6 @@ namespace Api
 
                 // Populate the container using the service collection
                 config.Populate(services);
-
-                config.For<IMapper>().Use(ctx => ResolveMapper(ctx, Assembly.Load("Logic"))).Singleton();
             });
 
             // container.AssertConfigurationIsValid();

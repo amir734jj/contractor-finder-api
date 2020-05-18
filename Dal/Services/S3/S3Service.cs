@@ -17,7 +17,9 @@ namespace Dal.Services.S3
     public class S3Service : IS3Service
     {
         private readonly IAmazonS3 _client;
+        
         private readonly ILogger<S3Service> _logger;
+        
         private readonly S3ServiceConfig _s3ServiceConfig;
 
         /// <summary>
@@ -38,9 +40,8 @@ namespace Dal.Services.S3
         /// </summary>
         /// <param name="fileKey"></param>
         /// <param name="data"></param>
-        /// <param name="metadata"></param>
         /// <returns></returns>
-        public async Task<SimpleS3Response> Upload(Guid fileKey, byte[] data, IDictionary<string, string> metadata)
+        public async Task<SimpleS3Response> Upload(Guid fileKey, byte[] data)
         {
             try
             {
@@ -53,14 +54,8 @@ namespace Dal.Services.S3
                         Key = $"{_s3ServiceConfig.Prefix}/{fileKey}",
                         InputStream = new MemoryStream(data),
                         BucketName = _s3ServiceConfig.BucketName,
-                        CannedACL = S3CannedACL.Private,
-                        AutoCloseStream = true
+                        CannedACL = S3CannedACL.PublicRead
                     };
-
-                    foreach (var (key, value) in metadata)
-                    {
-                        fileTransferUtilityRequest.Metadata.Add(key, value);
-                    }
 
                     await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
 
@@ -87,45 +82,6 @@ namespace Dal.Services.S3
         }
 
         /// <summary>
-        /// Get a file from S3
-        /// </summary>
-        /// <param name="keyName">Key name of the bucket (File Name)</param>
-        /// <returns></returns>
-        public async Task<UriS3Response> GetUri(Guid keyName)
-        {
-            try
-            {
-                // Build the request with the bucket name and the keyName (name of the file)
-                var preSignedUrlRequest = new GetPreSignedUrlRequest
-                {
-                    BucketName = _s3ServiceConfig.BucketName,
-                    Key = $"{_s3ServiceConfig.Prefix}/{keyName}",
-                    Expires = DateTime.Now.AddHours(1)
-                };
-
-                var urlString = _client.GetPreSignedURL(preSignedUrlRequest);
-
-                var file = await Download(keyName);
-
-                return new UriS3Response(HttpStatusCode.OK, "Successfully generated Uri", new Uri(urlString),  file.MetaData, file.ContentType, file.Name);
-            }
-            // Catch specific amazon errors
-            catch (AmazonS3Exception e)
-            {
-                _logger.LogError(e.AmazonId2, e);
-                
-                return new UriS3Response(e.StatusCode, e.Message);
-            }
-            // Catch other errors
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message, e);
-
-                return new UriS3Response(HttpStatusCode.BadRequest, e.Message);
-            }
-        }
-        
-        /// <summary>
         /// Download S3 object
         /// </summary>
         /// <param name="keyName"></param>
@@ -149,12 +105,9 @@ namespace Dal.Services.S3
                 var metadata = response.Metadata.Keys.ToDictionary(x => x, x => response.Metadata[x]);
 
                 // Copy stream to another stream
-                responseStream.CopyTo(memoryStream);
+                await responseStream.CopyToAsync(memoryStream);
 
-                return new DownloadS3Response(HttpStatusCode.OK, "Successfully downloaded S3 object",
-                    memoryStream.ToArray(),
-                    metadata,
-                    contentType,
+                return new DownloadS3Response(HttpStatusCode.OK, "Successfully downloaded S3 object", memoryStream.ToArray(), metadata, contentType,
                     title);
             }
             // Catch specific amazon errors
@@ -183,9 +136,7 @@ namespace Dal.Services.S3
 
             var result = await _client.ListObjectsV2Async(request);
 
-            return result.S3Objects?.Select(x => x.Key)
-                .Select(Guid.Parse)
-                .ToList();
+            return result.S3Objects?.Select(x => Guid.Parse(x.Key)).ToList();
         }
 
         public async Task<S3DeleteObjectResponse> Delete(Guid keyName)

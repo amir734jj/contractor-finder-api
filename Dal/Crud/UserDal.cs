@@ -38,18 +38,20 @@ namespace Dal.Crud
             return _dbContext.Users;
         }
 
-        /// <summary>
-        /// Include certain fields
-        /// </summary>
-        /// <param name="source"></param>
-        /// <typeparam name="TQueryable"></typeparam>
-        /// <returns></returns>
-        protected override IQueryable<User> Include<TQueryable>(TQueryable source)
+        protected override IQueryable<User> Intercept<TQueryable>(TQueryable queryable)
         {
-            return source
+            return queryable
                 .Include(x => x.ContractorRef)
                 .Include(x => x.HomeownerRef)
                 .Include(x => x.InternalUserRef);
+        }
+
+        protected override void UpdateEntity(User entity, User dto)
+        {
+            entity.Description = dto.Description;
+            entity.Firstname = dto.Firstname;
+            entity.Lastname = dto.Lastname;
+            entity.PhoneNumber = dto.PhoneNumber;
         }
     }
 }

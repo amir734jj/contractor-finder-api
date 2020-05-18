@@ -10,9 +10,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Models.Entities.Contractors;
+using Models.Entities.Homeowners;
+using Models.Entities.Internals;
 using Models.Entities.Users;
 using Models.Enums;
-using Models.Factories;
 using Models.ViewModels;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -54,14 +56,29 @@ namespace Api.Controllers
         public async Task<IActionResult> Register([FromRoute] RoleEnum role,
             [FromBody] RegisterViewModel registerViewModel)
         {
-            var user = UserFactory.New(role, x =>
+            var user = new User
             {
-                x.Firstname = registerViewModel.Firstname;
-                x.Lastname = registerViewModel.Lastname;
-                x.Email = registerViewModel.Email;
-                x.UserName = registerViewModel.Username;
-                x.Role = role;
-            });
+                Firstname = registerViewModel.Firstname,
+                Lastname = registerViewModel.Lastname,
+                Email = registerViewModel.Email,
+                UserName = registerViewModel.Username,
+                Role = role
+            };
+
+            switch (role)
+            {
+                case RoleEnum.Internal:
+                    user.InternalUserRef = new InternalUser();
+                    break;
+                case RoleEnum.Contractor:
+                    user.ContractorRef = new Contractor();
+                    break;
+                case RoleEnum.Homeowner:
+                    user.HomeownerRef = new Homeowner();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(role), role, null);
+            }
 
             // Create user
             var identityResults = new List<IdentityResult>

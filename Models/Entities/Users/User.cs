@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
+using Models.Entities.Common;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 using Models.Entities.Internals;
@@ -9,7 +10,7 @@ using Models.Interfaces;
 
 namespace Models.Entities.Users
 {
-    public class User : IdentityUser<Guid>, IPerson
+    public class User : IdentityUser<Guid>, IPerson, IEntity
     {
         public RoleEnum Role { get; set; }
 
@@ -24,7 +25,9 @@ namespace Models.Entities.Users
         /// 
         /// Used nullable Guid to avoid 0000-0000-... being as the default value
         /// </summary>
-        public Guid? Photo { get; set; }
+        public Photo PhotoRef { get; set; }
+        
+        public Guid? PhotoKey { get; set; }
 
         [JsonIgnore]
         public Contractor ContractorRef { get; set; }

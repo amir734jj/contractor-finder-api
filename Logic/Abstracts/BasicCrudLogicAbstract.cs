@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Dal.Interfaces;
 using Logic.Interfaces;
 
@@ -17,18 +15,12 @@ namespace Logic.Abstracts
         protected abstract IBasicCrudDal<T> GetBasicCrudDal();
 
         /// <summary>
-        /// AutoMapper instance
-        /// </summary>
-        /// <returns></returns>
-        protected abstract IMapper Mapper();
-
-        /// <summary>
         /// Call forwarding
         /// </summary>
         /// <returns></returns>
         public virtual async Task<IEnumerable<T>> GetAll()
         {
-            return Map(await GetBasicCrudDal().GetAll());
+            return await GetBasicCrudDal().GetAll();
         }
 
         /// <summary>
@@ -38,7 +30,7 @@ namespace Logic.Abstracts
         /// <returns></returns>
         public virtual async Task<T> Get(Guid id)
         {
-            return Map(await GetBasicCrudDal().Get(id));
+            return await GetBasicCrudDal().Get(id);
         }
 
         /// <summary>
@@ -65,42 +57,11 @@ namespace Logic.Abstracts
         /// Call forwarding
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="updatedInstance"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
-        public virtual async Task<T> Update(Guid id, T updatedInstance)
+        public virtual async Task<T> Update(Guid id, T dto)
         {
-            return await GetBasicCrudDal().Update(id, updatedInstance);
-        }
-
-        /// <summary>
-        /// Call forwarding
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="modifyAction"></param>
-        /// <returns></returns>
-        public virtual async Task<T> Update(Guid id, Action<T> modifyAction)
-        {
-            return await GetBasicCrudDal().Update(id, modifyAction);
-        }
-
-        /// <summary>
-        /// Map for IEnumerable
-        /// </summary>
-        /// <param name="items"></param>
-        /// <returns></returns>
-        private IEnumerable<T> Map(IEnumerable<T> items)
-        {
-            return items.Select(Map);
-        }
-
-        /// <summary>
-        /// Method that derives custom properties upon GET
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        protected virtual T Map(T item)
-        {
-            return Mapper().Map<T>(item);
+            return await GetBasicCrudDal().Update(id, dto);
         }
     }
 }

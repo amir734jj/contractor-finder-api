@@ -38,16 +38,14 @@ namespace Dal.Crud
             return _dbContext.InternalUsers;
         }
 
-        /// <summary>
-        /// Include certain fields
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        protected override IQueryable<InternalUser> Include<TQueryable>(
-            TQueryable source)
+        protected override IQueryable<InternalUser> Intercept<TQueryable>(TQueryable queryable)
         {
-            return (TQueryable) source
+            return queryable
                 .Include(x => x.UserRef);
+        }
+
+        protected override void UpdateEntity(InternalUser entity, InternalUser dto)
+        {
         }
     }
 }

@@ -16,10 +16,10 @@ namespace Api.Utilities
 
             var connectionStringBuilder = new NpgsqlConnectionStringBuilder
             {
-                Host = url.Host,
-                Username = url.UserInfo.Split(':')[0],
-                Password = url.UserInfo.Split(':')[1],
-                Database = url.LocalPath.Substring(1),
+                Host = url?.Host,
+                Username = url?.UserInfo.Split(':')[0],
+                Password = url?.UserInfo.Split(':')[1],
+                Database = url?.LocalPath.Substring(1),
                 SslMode = SslMode.Require,
                 TrustServerCertificate = true,
                 Pooling = true,

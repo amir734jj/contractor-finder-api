@@ -1,54 +1,44 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Dal.Interfaces;
 using Logic.Interfaces;
-using Models.ViewModels.Services.S3;
+using Models.Internal;
 
 namespace Logic
 {
     public class ImageUploadLogic : IImageUploadLogic
     {
-        private readonly IS3Service _s3Service;
+        private readonly IFileService _fileService;
 
-        public ImageUploadLogic(IS3Service s3Service)
+        public ImageUploadLogic(IFileService fileService)
         {
-            _s3Service = s3Service;
+            _fileService = fileService;
         }
         
-        public async Task<Guid> Upload(byte[] stream, IDictionary<string, string> metadata)
+        public async Task<Guid> Upload(BasicFile file)
         {
             // Randomly assign a key!
             var key = Guid.NewGuid();
 
-            await _s3Service.Upload(key, stream, metadata);
+            await _fileService.Upload(key, file);
 
             return key;
         }
 
-        public async Task<DownloadS3Response> Download(Guid id)
+        public async Task<BasicFile> Download(Guid id)
         {
-            return await _s3Service.Download(id);
-        }
-
-        public async Task<string> Url(Guid id)
-        {
-            return (await _s3Service.GetUri(id))?.Uri?.AbsoluteUri;
+            return await _fileService.Download(id);
         }
 
         public Task<List<Guid>> List()
         {
-            return _s3Service.List();
+            return _fileService.List();
         }
 
         public async Task<bool> Delete(Guid keyName)
         {
-            return (await _s3Service.Delete(keyName))?.Status switch
-            {
-                HttpStatusCode.OK => true,
-                _ => false
-            };
+            return await _fileService.Delete(keyName);
         }
     }
 }

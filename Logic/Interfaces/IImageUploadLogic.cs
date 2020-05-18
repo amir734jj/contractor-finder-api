@@ -1,18 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Models.ViewModels.Services.S3;
+using Microsoft.AspNetCore.Http;
+using Models.Internal;
 
 namespace Logic.Interfaces
 {
     public interface IImageUploadLogic
     {
-        Task<Guid> Upload(byte[] stream, IDictionary<string, string> metadata);
+        Task<Guid> Upload(BasicFile file);
 
-        Task<DownloadS3Response> Download(Guid id);
-        
-        Task<string> Url(Guid id);
-        
+        Task<BasicFile> Download(Guid id);
+
         Task<List<Guid>> List();
 
         Task<bool> Delete(Guid id);

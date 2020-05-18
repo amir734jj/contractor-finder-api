@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Internals;
 
-namespace Api.Controllers
+namespace Api.Controllers.Crud
 {
     [Authorize]
     [ApiController]

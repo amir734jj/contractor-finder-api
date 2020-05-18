@@ -1,9 +1,7 @@
 namespace Models.Entities.Common
 {
-    public class ProjectPhoto
+    public class ProjectPhoto : Photo
     {
-        public string Key { get; set; }
-        
         public string Description { get; set; }
     }
 }

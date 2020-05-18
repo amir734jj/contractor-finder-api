@@ -31,26 +31,7 @@ namespace Dal.Utilities
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Contractor>()
-                .HasOne(x => x.UserRef)
-                .WithOne(x => x.ContractorRef)
-                .HasForeignKey<User>(x => x.ContractorKey)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired(false);
-            
-            builder.Entity<Homeowner>()
-                .HasOne(x => x.UserRef)
-                .WithOne(x => x.HomeownerRef)
-                .HasForeignKey<User>(x => x.HomeownerKey)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired(false);
-            
-            builder.Entity<InternalUser>()
-                .HasOne(x => x.UserRef)
-                .WithOne(x => x.InternalUserRef)
-                .HasForeignKey<User>(x => x.InternalUserKey)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired(false);
+            builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         }
     }
 }

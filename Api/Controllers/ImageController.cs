@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
-using Api.Extensions;
 using Api.Middlewares.FileUpload;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Models.Constants;
+using Models.Internal;
 using Models.ViewModels;
 
 namespace Api.Controllers
@@ -25,42 +21,17 @@ namespace Api.Controllers
             _imageUploadLogic = imageUploadLogic;
         }
 
-        //[FileUpload]
-        [HttpPost]
-        [Route("upload/base64")]
-        public async Task<IActionResult> ImageUploadBase64([FromBody] Base64UploadViewModel file)
-        {
-            if (file?.Base64?.Length == null)
-            {
-                return BadRequest("Failed to upload file");
-            }
-
-            var response = await _imageUploadLogic.Upload(
-                Convert.FromBase64String(file.Base64),
-                new Dictionary<string, string>
-                {
-                    [ImageMetadataKey.Description] = file.Description,
-                    [ImageMetadataKey.Name] = file.Name
-                }
-            );
-
-            return Ok(response);
-        }
-
         [FileUpload]
         [HttpPost]
         [Route("upload")]
-        public async Task<IActionResult> ImageUpload([FromForm] IFormFile file, [FromQuery] string description)
+        public async Task<IActionResult> ImageUpload([FromBody] FileUploadViewModel fileUploadViewModel)
         {
-            if (file == null)
+            if (fileUploadViewModel == null)
             {
                 return BadRequest("Failed to upload file");
             }
 
-            var response = await _imageUploadLogic.Upload(
-                await file.ToByteArray(),
-                new Dictionary<string, string> { [ImageMetadataKey.Description] = description }
-            );
+            var response = await _imageUploadLogic.Upload(new BasicFile(fileUploadViewModel.File));
 
             return Ok(response);
         }
@@ -72,23 +43,9 @@ namespace Api.Controllers
         {
             var result = await _imageUploadLogic.Download(id);
 
-            if (result.Status == HttpStatusCode.OK)
-            {
-                return File(result.Data, result.ContentType, result.Name);
-            }
-
-            return BadRequest(result.Message);
+            return File(result.Data, result.ContentType, result.Name);
         }
-        
-        [HttpGet]
-        [Route("{id}/url")]
-        public async Task<IActionResult> ImageUrl([FromRoute] Guid id)
-        {
-            var result = await _imageUploadLogic.Url(id);
 
-            return Ok(result);
-        }
-        
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> ListImages()

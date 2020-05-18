@@ -5,8 +5,7 @@
     <RootNamespace>Api</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Ben.Demystifier" Version="0.1.4" />
+    <PackageReference Include="Ben.Demystifier" Version="0.1.6" />
     <PackageReference Include="Flurl" Version="2.8.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="OwaspHeaders.Core" Version="4.2.0" />

@@ -3,7 +3,7 @@ using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Contractors;
 
-namespace Api.Controllers
+namespace Api.Controllers.Crud
 {
     [ApiController]
     [Route("Api/[controller]")]

@@ -16,20 +16,12 @@ namespace Logic
 
         public async Task Update(User user, ProfileViewModel profileViewModel)
         {
-            await _userLogic.Update(user.Id, entity =>
-            {
-                entity.Description = profileViewModel.Description;
-                entity.PhoneNumber = profileViewModel.PhoneNumber;
-                entity.Firstname = profileViewModel.Firstname;
-                entity.Lastname = profileViewModel.Lastname;
-                entity.Description = profileViewModel.Description;
-                entity.Photo = profileViewModel.Photo;
+            user.Description = profileViewModel.Description;
+            user.PhoneNumber = profileViewModel.PhoneNumber;
+            user.Firstname = profileViewModel.Firstname;
+            user.Lastname = profileViewModel.Lastname;
 
-                if (entity.ContractorRef != null)
-                {
-                    entity.ContractorRef.Speciality = profileViewModel.Contractor?.Speciality;
-                }
-            });
+            await _userLogic.Update(user.Id, user);
         }
     }
 }

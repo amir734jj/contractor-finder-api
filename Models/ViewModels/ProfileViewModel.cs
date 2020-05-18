@@ -41,7 +41,7 @@ namespace Models.ViewModels
             Role = user.Role;
             PhoneNumber = user.PhoneNumber;
             Description = user.Description;
-            Photo = user.Photo;
+            // Photo = user.Photo;
 
             Contractor = user.ContractorRef;
             InternalUser = user.InternalUserRef;
