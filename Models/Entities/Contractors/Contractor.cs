@@ -12,7 +12,6 @@ namespace Models.Entities.Contractors
 
         public List<ProjectMilestone> HomeownerProjects { get; set; } = new List<ProjectMilestone>();
 
-        [JsonIgnore]
         public User UserRef { get; set; }
 
         public List<Speciality> Speciality { get; set; } = new List<Speciality>();

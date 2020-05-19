@@ -27,17 +27,14 @@ namespace Models.Entities.Users
         
         public Guid? PhotoKey { get; set; }
 
-        [JsonIgnore]
         public Contractor ContractorRef { get; set; }
 
         public Guid? ContractorKey { get; set; }
-        
-        [JsonIgnore]
+
         public Homeowner HomeownerRef { get; set; }
 
         public Guid? HomeownerKey { get; set; }
 
-        [JsonIgnore]
         public InternalUser InternalUserRef { get; set; }
 
         public Guid? InternalUserKey { get; set; }

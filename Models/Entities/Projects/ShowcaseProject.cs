@@ -13,7 +13,6 @@ namespace Models.Entities.Projects
 
         public List<ProjectPhoto> ProjectPhotos { get; set; } = new List<ProjectPhoto>();
 
-        [JsonIgnore]
         public Contractor Contractor { get; set; }
     }
 }

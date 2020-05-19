@@ -15,10 +15,8 @@ namespace Models.Entities.Projects
         
         public DateTimeOffset DateTime { get; set; }
 
-        [JsonIgnore]
         public Contractor Contractor { get; set; }
-        
-        [JsonIgnore]
+
         public Homeowner Homeowner { get; set; }
 
         public List<ProjectPhoto> ProjectPhotos { get; set; } = new List<ProjectPhoto>();

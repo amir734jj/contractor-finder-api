@@ -12,8 +12,7 @@ namespace Models.Entities.Projects
         public string Description { get; set; }
         
         public List<ProjectMilestone> Milestones { get; set; } = new List<ProjectMilestone>();
-        
-        [JsonIgnore]
+
         public Homeowner Homeowner { get; set; }
     }
 }

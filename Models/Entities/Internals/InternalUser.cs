@@ -6,7 +6,6 @@ namespace Models.Entities.Internals
 {
     public class InternalUser : Entity
     {
-        [JsonIgnore]
         public User UserRef { get; set; }
     }
 }
