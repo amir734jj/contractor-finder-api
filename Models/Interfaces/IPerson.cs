@@ -11,9 +11,6 @@ namespace Models.Interfaces
         string PhoneNumber { get; set; }
         
         [ProtectedPersonalData]
-        string Firstname { get; set; }
-        
-        [ProtectedPersonalData]
-        string Lastname { get; set; }
+        string Name { get; set; }
     }
 }

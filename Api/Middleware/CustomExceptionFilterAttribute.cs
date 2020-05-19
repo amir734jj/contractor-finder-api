@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
-namespace Api.Middlewares
+namespace Api.Middleware
 {
     public class CustomExceptionFilterAttribute : ExceptionFilterAttribute
     {

@@ -58,8 +58,7 @@ namespace Api.Controllers
         {
             var user = new User
             {
-                Firstname = registerViewModel.Firstname,
-                Lastname = registerViewModel.Lastname,
+                Name = registerViewModel.Name,
                 Email = registerViewModel.Email,
                 UserName = registerViewModel.Username,
                 Role = role
@@ -134,11 +133,13 @@ namespace Api.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Value.Key));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            var expires = DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenDurationInMinutes);
+            
             var token = new JwtSecurityToken(
                 _jwtSettings.Value.Issuer,
                 _jwtSettings.Value.Issuer,
                 claims,
-                expires: DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenDurationInMinutes),
+                expires: expires,
                 signingCredentials: credentials);
 
             var userRoleInfo = await _userManager.GetRolesAsync(user);
@@ -148,9 +149,9 @@ namespace Api.Controllers
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 roles = userRoleInfo,
                 user.Role,
-                user.Firstname,
-                user.Lastname,
-                user.Email
+                user.Name,
+                user.Email,
+                expires
             });
         }
 

@@ -9,10 +9,8 @@ namespace Models.ViewModels
 {
     public class ProfileViewModel
     {
-        public string Firstname { get; set; }
-        
-        public string Lastname { get; set; }
-        
+        public string Name { get; set; }
+
         public string Email { get; set; }
         
         public string PhoneNumber { get; set; }
@@ -35,8 +33,7 @@ namespace Models.ViewModels
         {
             if (user == null) return;
             
-            Firstname = user.Firstname;
-            Lastname = user.Lastname;
+            Name = user.Name;
             Email = user.Email;
             Role = user.Role;
             PhoneNumber = user.PhoneNumber;

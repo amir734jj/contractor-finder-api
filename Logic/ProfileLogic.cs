@@ -18,8 +18,7 @@ namespace Logic
         {
             user.Description = profileViewModel.Description;
             user.PhoneNumber = profileViewModel.PhoneNumber;
-            user.Firstname = profileViewModel.Firstname;
-            user.Lastname = profileViewModel.Lastname;
+            user.Name = profileViewModel.Name;
 
             await _userLogic.Update(user.Id, user);
         }

@@ -5,9 +5,7 @@ namespace Models.ViewModels
     /// </summary>
     public class RegisterViewModel
     {
-        public string Firstname { get; set; }
-        
-        public string Lastname { get; set; }
+        public string Name { get; set; }
 
         public string Username { get; set; }
         

@@ -8,7 +8,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
-using Api.Middlewares;
+using Api.Middleware;
 using Dal.Configs;
 using Dal.Interfaces;
 using Dal.Services.InMemory;
@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Constants;
 using Models.Entities.Users;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using StackExchange.Redis;
 using StructureMap;
@@ -66,6 +68,18 @@ namespace Api
         /// <returns></returns>
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            // If using Kestrel:
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            // If using IIS:
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+            
             services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
 
             services.AddDistributedMemoryCache();
@@ -168,7 +182,11 @@ namespace Api
 
                     opt.Filters.Add<CustomExceptionFilterAttribute>();
                 })
-                .AddNewtonsoftJson(option => option.SerializerSettings.Converters.Add(new StringEnumConverter()));
+                .AddNewtonsoftJson(option =>
+                {
+                    option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    option.SerializerSettings.Converters.Add(new StringEnumConverter());
+                });
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {

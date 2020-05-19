@@ -16,9 +16,7 @@ namespace Models.Entities.Users
 
         public string Description { get; set; }
         
-        public string Firstname { get; set; }
-
-        public string Lastname { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Keys to lookup from S3

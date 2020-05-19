@@ -49,8 +49,7 @@ namespace Dal.Crud
         protected override void UpdateEntity(User entity, User dto)
         {
             entity.Description = dto.Description;
-            entity.Firstname = dto.Firstname;
-            entity.Lastname = dto.Lastname;
+            entity.Name = dto.Name;
             entity.PhoneNumber = dto.PhoneNumber;
         }
     }

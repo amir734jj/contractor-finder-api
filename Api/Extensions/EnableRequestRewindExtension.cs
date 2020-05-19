@@ -1,5 +1,4 @@
 using Api.Middleware;
-using Api.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
 namespace Api.Extensions
