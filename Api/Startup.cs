@@ -33,6 +33,8 @@ using Models.Constants;
 using Models.Entities.Users;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using OwaspHeaders.Core.Extensions;
+using OwaspHeaders.Core.Models;
 using StackExchange.Redis;
 using StructureMap;
 using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport;
@@ -97,8 +99,8 @@ namespace Api
             services.Configure<JwtSettings>(_configuration.GetSection("JwtSettings"));
 
             // Add our Config object so it can be injected
-            //services.Configure<SecureHeadersMiddlewareConfiguration>(
-            //    _configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
+            services.Configure<SecureHeadersMiddlewareConfiguration>(
+                _configuration.GetSection("SecureHeadersMiddlewareConfiguration"));
 
             services.AddLogging();
 
@@ -279,9 +281,9 @@ namespace Api
         {
             // Add SecureHeadersMiddleware to the pipeline
             // See: https://github.com/GaProgMan/OwaspHeaders.Core
-            //app.UseSecureHeadersMiddleware(SecureHeadersMiddlewareBuilder
-            //    .CreateBuilder()
-            //    .Build());
+            app.UseSecureHeadersMiddleware(SecureHeadersMiddlewareBuilder
+                .CreateBuilder()
+                .Build());
 
             app.UseEnableRequestRewind()
                 .UseDeveloperExceptionPage();
