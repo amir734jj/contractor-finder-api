@@ -15,7 +15,7 @@ namespace Api.Middlewares
         
         public override void OnException(ExceptionContext context)
         {
-            _logger.LogError(context.Exception.Demystify(), $"Caught an exception in {typeof(CustomExceptionFilterAttribute).Name}");
+            _logger.LogError(context.Exception.Demystify(), $"Caught an exception in {nameof(CustomExceptionFilterAttribute)}");
             
             base.OnException(context);
         }

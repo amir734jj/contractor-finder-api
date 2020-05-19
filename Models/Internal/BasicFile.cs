@@ -7,9 +7,16 @@ namespace Models.Internal
     {
         public BasicFile(IFormFile file)
         {
-            Name = file.Name;
+            Name = file.FileName;
             ContentType = file.ContentType;
             Data = AsByteArray(file);
+        }
+
+        public BasicFile(byte[] data, string name, string contentType)
+        {
+            Data = data;
+            Name = name;
+            ContentType = contentType;
         }
 
         public byte[] Data { get; }

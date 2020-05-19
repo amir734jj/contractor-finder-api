@@ -7,7 +7,7 @@ namespace Dal.Interfaces
 {
     public interface IS3Service
     {
-        Task<SimpleS3Response> Upload(Guid fileKey, byte[] data);
+        Task<SimpleS3Response> Upload(Guid fileKey, byte[] data, Dictionary<string, string> metadata);
 
         Task<DownloadS3Response> Download(Guid keyName);
 

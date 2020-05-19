@@ -1,13 +1,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Api.Middlewares
+namespace Api.Middleware
 {
     public class EnableRequestRewindMiddleware
     {
         private readonly RequestDelegate _next;
 
-        ///<inheritdoc/>
         public EnableRequestRewindMiddleware(RequestDelegate next)
         {
             _next = next;

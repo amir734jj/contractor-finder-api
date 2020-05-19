@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using Api.Middlewares.FileUpload;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Internal;
 using Models.ViewModels;
+using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport;
 
 namespace Api.Controllers
 {
@@ -20,11 +20,11 @@ namespace Api.Controllers
         {
             _imageUploadLogic = imageUploadLogic;
         }
-
-        [FileUpload]
+        
         [HttpPost]
         [Route("upload")]
-        public async Task<IActionResult> ImageUpload([FromBody] FileUploadViewModel fileUploadViewModel)
+        [Consumes("multipart/form-data")] 
+        public async Task<IActionResult> ImageUpload([FromForm] MultipartFormData<FileUploadViewModel> fileUploadViewModel)
         {
             if (fileUploadViewModel == null)
             {
@@ -35,8 +35,7 @@ namespace Api.Controllers
 
             return Ok(response);
         }
-
-        [AllowAnonymous]
+        
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> DownloadImage([FromRoute] Guid id)

@@ -8,7 +8,6 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Api.Configs;
 using Api.Extensions;
-using Api.Middlewares.FileUpload;
 using Api.Middlewares;
 using Dal.Configs;
 using Dal.Interfaces;
@@ -34,6 +33,7 @@ using Models.Entities.Users;
 using Newtonsoft.Json.Converters;
 using StackExchange.Redis;
 using StructureMap;
+using Swashbuckle.AspNetCore.JsonMultipartFormDataSupport;
 using static Api.Utilities.ConnectionStringUtility;
 
 namespace Api
@@ -133,11 +133,7 @@ namespace Api
             var jwtSetting = _configuration
                 .GetSection("JwtSettings")
                 .Get<JwtSettings>();
-            
-            var ftpSetting = _configuration
-                .GetSection("FtpSettings")
-                .Get<FtpServiceConfig>();
-            
+
             services.AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -171,7 +167,6 @@ namespace Api
                     }
 
                     opt.Filters.Add<CustomExceptionFilterAttribute>();
-                    opt.Filters.Add<FileUploadActionFilterAttribute>();
                 })
                 .AddNewtonsoftJson(option => option.SerializerSettings.Converters.Add(new StringEnumConverter()));
 
@@ -200,7 +195,7 @@ namespace Api
                     config.IncludeXmlComments(xmlPath);
                 }
 
-                config.OperationFilter<FileUploadOperation>();
+                config.OperationFilter<MultiPartJsonOperationFilter>();
 
                 config.AddSecurityDefinition("Bearer", // Name the security scheme
                     new OpenApiSecurityScheme
@@ -211,9 +206,10 @@ namespace Api
                     });
             });
 
+            services.AddJsonMultipartFormDataSupport(JsonSerializerChoice.Newtonsoft);
+
             var container = new Container(config =>
             {
-                config.For<FtpServiceConfig>().Use(ftpSetting);
                 config.For<JwtSettings>().Use(jwtSetting);
 
                 if (_env.IsDevelopment())

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dal.Interfaces;
+using Models.Internal;
 using StructureMap;
 
 namespace Dal.Services.InMemory
@@ -10,16 +11,16 @@ namespace Dal.Services.InMemory
     [Singleton]
     public class InMemoryFileService : IFileService
     {
-        private readonly Dictionary<Guid, byte[]> _table = new Dictionary<Guid, byte[]>();
+        private readonly Dictionary<Guid, BasicFile> _table = new Dictionary<Guid, BasicFile>();
         
-        public async Task<bool> Upload(Guid fileKey, string fileName, byte[] data)
+        public async Task<bool> Upload(Guid fileKey, BasicFile file)
         {
-            _table[fileKey] = data;
+            _table[fileKey] = file;
 
             return true;
         }
 
-        public async Task<byte[]> Download(Guid keyName)
+        public async Task<BasicFile> Download(Guid keyName)
         {
             return _table.GetValueOrDefault(keyName, null);
         }

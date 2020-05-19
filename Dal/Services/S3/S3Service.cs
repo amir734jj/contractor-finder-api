@@ -40,8 +40,9 @@ namespace Dal.Services.S3
         /// </summary>
         /// <param name="fileKey"></param>
         /// <param name="data"></param>
+        /// <param name="metadata"></param>
         /// <returns></returns>
-        public async Task<SimpleS3Response> Upload(Guid fileKey, byte[] data)
+        public async Task<SimpleS3Response> Upload(Guid fileKey, byte[] data, Dictionary<string, string> metadata)
         {
             try
             {
@@ -56,6 +57,11 @@ namespace Dal.Services.S3
                         BucketName = _s3ServiceConfig.BucketName,
                         CannedACL = S3CannedACL.PublicRead
                     };
+                    
+                    foreach (var (key, value) in metadata)
+                    {
+                        fileTransferUtilityRequest.Metadata.Add(key, value);
+                    }
 
                     await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
 
@@ -107,8 +113,13 @@ namespace Dal.Services.S3
                 // Copy stream to another stream
                 await responseStream.CopyToAsync(memoryStream);
 
-                return new DownloadS3Response(HttpStatusCode.OK, "Successfully downloaded S3 object", memoryStream.ToArray(), metadata, contentType,
-                    title);
+                return new DownloadS3Response(HttpStatusCode.OK,
+                    "Successfully downloaded S3 object",
+                    memoryStream.ToArray(),
+                    metadata,
+                    contentType,
+                    title
+                );
             }
             // Catch specific amazon errors
             catch (AmazonS3Exception e)
