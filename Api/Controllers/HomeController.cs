@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [AllowAnonymous]
     [Route("")]
     public class HomeController : Controller

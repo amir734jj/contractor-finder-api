@@ -3,14 +3,15 @@ using System.Collections;
 using System.Threading.Tasks;
 using Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Models.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Api.Abstracts
 {
-    public abstract class BasicCrudController<T> : Controller
+    public abstract class BasicCrudController<T> : Controller where T: IEntity
     {
         [NonAction]
-        protected abstract IBasicCrudLogic<T> BasicCrudLogic();
+        protected abstract Task<IBasicCrudLogic<T>> BasicCrudLogic();
 
         /// <summary>
         /// GetAll items
@@ -22,7 +23,7 @@ namespace Api.Abstracts
         [ProducesResponseType(typeof(IEnumerable), 200)]
         public virtual async Task<IActionResult> GetAll()
         {
-            return Ok(await BasicCrudLogic().GetAll());
+            return Ok(await (await BasicCrudLogic()).GetAll());
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace Api.Abstracts
         [SwaggerOperation("Get")]
         public virtual async Task<IActionResult> Get([FromRoute] Guid id)
         {
-            return Ok(await BasicCrudLogic().Get(id));
+            return Ok(await (await BasicCrudLogic()).Get(id));
         }
 
         /// <summary>
@@ -49,7 +50,7 @@ namespace Api.Abstracts
         [SwaggerOperation("Update")]
         public virtual async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] T instance)
         {
-            return Ok(await BasicCrudLogic().Update(id, instance));
+            return Ok(await (await BasicCrudLogic()).Update(id, instance));
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace Api.Abstracts
         [SwaggerOperation("Delete")]
         public virtual async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            return Ok(await BasicCrudLogic().Delete(id));
+            return Ok(await (await BasicCrudLogic()).Delete(id));
         }
         
         /// <summary>
@@ -75,7 +76,7 @@ namespace Api.Abstracts
         [SwaggerOperation("Save")]
         public virtual async Task<IActionResult> Save([FromBody] T instance)
         {
-            return Ok(await BasicCrudLogic().Save(instance));
+            return Ok(await (await BasicCrudLogic()).Save(instance));
         }
     }
 }

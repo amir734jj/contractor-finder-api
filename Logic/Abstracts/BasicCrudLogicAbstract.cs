@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dal.Interfaces;
 using Logic.Interfaces;
+using Models.Interfaces;
 
 namespace Logic.Abstracts
 {
-    public abstract class BasicCrudLogicAbstract<T> : IBasicCrudLogic<T>
+    public abstract class BasicCrudLogicAbstract<T> : IBasicCrudLogic<T> where T: IEntity
     {
         /// <summary>
         /// Returns instance of basic DAL

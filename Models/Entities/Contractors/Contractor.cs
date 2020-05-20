@@ -2,7 +2,6 @@
 using Models.Entities.Common;
 using Models.Entities.Projects;
 using Models.Entities.Users;
-using Newtonsoft.Json;
 
 namespace Models.Entities.Contractors
 {
@@ -10,7 +9,7 @@ namespace Models.Entities.Contractors
     {
         public List<ShowcaseProject> ShowcaseProjects { get; set; } = new List<ShowcaseProject>();
 
-        public List<ProjectMilestone> HomeownerProjects { get; set; } = new List<ProjectMilestone>();
+        public List<ProjectMilestone> ProjectMilestones { get; set; } = new List<ProjectMilestone>();
 
         public User UserRef { get; set; }
 

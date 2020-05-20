@@ -1,9 +1,11 @@
+using System.Threading.Tasks;
 using Api.Abstracts;
 using Logic.Interfaces;
+using Logic.Interfaces.Basic;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Contractors;
 
-namespace Api.Controllers.Crud
+namespace Api.Controllers.Crud.Basic
 {
     [ApiController]
     [Route("Api/[controller]")]
@@ -16,7 +18,7 @@ namespace Api.Controllers.Crud
             _contractorLogic = contractorLogic;
         }
         
-        protected override IBasicCrudLogic<Contractor> BasicCrudLogic()
+        protected override async Task<IBasicCrudLogic<Contractor>> BasicCrudLogic()
         {
             return _contractorLogic;
         }

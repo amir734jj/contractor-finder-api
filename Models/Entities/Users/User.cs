@@ -1,5 +1,4 @@
 using System;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Models.Entities.Common;
 using Models.Entities.Contractors;

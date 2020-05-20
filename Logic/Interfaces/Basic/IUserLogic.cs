@@ -1,6 +1,6 @@
 ﻿using Models.Entities.Users;
 
-namespace Logic.Interfaces
+namespace Logic.Interfaces.Basic
 {
     public interface IUserLogic : IBasicCrudLogic<User>
     {

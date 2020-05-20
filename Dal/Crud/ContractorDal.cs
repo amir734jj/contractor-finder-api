@@ -48,7 +48,7 @@ namespace Dal.Crud
         protected override void UpdateEntity(Contractor entity, Contractor dto)
         {
             entity.Speciality = entity.Speciality.IdAwareUpdate(dto.Speciality, x => x.Id);
-            entity.HomeownerProjects = entity.HomeownerProjects.IdAwareUpdate(dto.HomeownerProjects, x => x.Id);
+            entity.ProjectMilestones = entity.ProjectMilestones.IdAwareUpdate(dto.ProjectMilestones, x => x.Id);
             entity.ShowcaseProjects = entity.ShowcaseProjects.IdAwareUpdate(dto.ShowcaseProjects, x => x.Id);
         }
     }

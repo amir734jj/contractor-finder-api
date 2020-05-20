@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Logic.Interfaces;
+using Logic.Interfaces.Basic;
 using Models.Entities.Users;
 using Models.ViewModels;
 

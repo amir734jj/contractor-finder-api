@@ -1,11 +1,13 @@
+using System.Threading.Tasks;
 using Api.Abstracts;
 using Api.Attributes;
 using Logic.Interfaces;
+using Logic.Interfaces.Basic;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Users;
 using static Models.Enums.RoleEnum;
 
-namespace Api.Controllers.Crud
+namespace Api.Controllers.Crud.Basic
 {
     [RoleAuthorize(Internal)]
     [ApiController]
@@ -19,7 +21,7 @@ namespace Api.Controllers.Crud
             _userLogic = userLogic;
         }
 
-        protected override IBasicCrudLogic<User> BasicCrudLogic()
+        protected override async Task<IBasicCrudLogic<User>> BasicCrudLogic()
         {
             return _userLogic;
         }

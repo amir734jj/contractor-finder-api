@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Models.Interfaces;
 
 namespace Dal.Interfaces
 {
-    public interface IBasicCrudDal<T>
+    public interface IBasicCrudDal<T> where T: IEntity
     {
         Task<IEnumerable<T>> GetAll();
 

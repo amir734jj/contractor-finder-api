@@ -1,9 +1,9 @@
 ﻿using Dal.Interfaces;
 using Logic.Abstracts;
-using Logic.Interfaces;
+using Logic.Interfaces.Basic;
 using Models.Entities.Homeowners;
 
-namespace Logic.Crud
+namespace Logic.Crud.Basic
 {
     public class HomeownerLogic : BasicCrudLogicAbstract<Homeowner>, IHomeownerLogic
     {

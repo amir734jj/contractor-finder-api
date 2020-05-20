@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Logic.Interfaces;
+using Logic.Interfaces.Basic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

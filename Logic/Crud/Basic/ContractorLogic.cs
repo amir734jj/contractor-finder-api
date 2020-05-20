@@ -1,9 +1,9 @@
 ﻿using Dal.Interfaces;
 using Logic.Abstracts;
-using Logic.Interfaces;
+using Logic.Interfaces.Basic;
 using Models.Entities.Contractors;
 
-namespace Logic.Crud
+namespace Logic.Crud.Basic
 {
     public class ContractorLogic : BasicCrudLogicAbstract<Contractor>, IContractorLogic
     {

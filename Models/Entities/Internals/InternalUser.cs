@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Models.Entities.Common;
 using Models.Entities.Users;
 

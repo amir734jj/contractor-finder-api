@@ -1,9 +1,9 @@
 ﻿using Dal.Interfaces;
 using Logic.Abstracts;
-using Logic.Interfaces;
+using Logic.Interfaces.Basic;
 using Models.Entities.Internals;
 
-namespace Logic.Crud
+namespace Logic.Crud.Basic
 {
     public class InternalUserLogic : BasicCrudLogicAbstract<InternalUser>, IInternalUserLogic
     {

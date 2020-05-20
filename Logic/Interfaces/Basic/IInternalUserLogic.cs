@@ -1,6 +1,6 @@
 using Models.Entities.Internals;
 
-namespace Logic.Interfaces
+namespace Logic.Interfaces.Basic
 {
     public interface IInternalUserLogic: IBasicCrudLogic<InternalUser>
     {
