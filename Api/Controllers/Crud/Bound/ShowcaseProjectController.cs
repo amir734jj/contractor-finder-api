@@ -1,4 +1,5 @@
 using Api.Abstracts;
+using Api.Attributes;
 using Logic.Interfaces;
 using Logic.Interfaces.Bound;
 using Microsoft.AspNetCore.Authorization;
@@ -6,10 +7,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Projects;
 using Models.Entities.Users;
+using Models.Enums;
 
 namespace Api.Controllers.Crud.Bound
 {
-    [Authorize]
+    [RoleAuthorize(RoleEnum.Contractor)]
     [Route("Api/[controller]")]
     public class ShowcaseProjectController : BasicCrudBoundController<ShowcaseProject>
     {

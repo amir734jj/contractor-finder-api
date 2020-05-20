@@ -8,47 +8,53 @@ using Models.Interfaces;
 
 namespace Logic.Abstracts
 {
-    public abstract class BasicCrudBoundLogicAbstract<T> : IBasicCrudBoundLogic<T> where T : IEntity
+    public abstract class BasicCrudBoundLogicAbstract<TParent, TItem> : IBasicCrudBoundLogic<TItem>
+        where TItem : IEntity
+        where TParent: IEntity
     {
-        public async Task<IBasicCrudLogic<T>> For(User user)
+        public async Task<IBasicCrudLogic<TItem>> For(User user)
         {
-            var entity = await UserLogic().Get(user.Id);
+            var userEntity = await UserLogic().Get(user.Id);
 
-            return new BasicListCrud(ResolveSource(entity), StateChangeSignal(entity));
+            var (parent, list) = ResolveSources(userEntity);
+
+            return new BasicListCrud(list, StateChangeSignal(parent));
         }
 
-        private Func<Task> StateChangeSignal(User user)
+        private Func<Task> StateChangeSignal(TParent parent)
         {
-            return async () => await UserLogic().Update(user.Id, user);
+            return async () => await ParentLogic().Update(parent.Id, parent);
         }
 
-        protected abstract List<T> ResolveSource(User user);
+        protected abstract (TParent, List<TItem>) ResolveSources(User user);
 
         protected abstract IBasicCrudLogic<User> UserLogic();
+        
+        protected abstract IBasicCrudLogic<TParent> ParentLogic();
 
-        private class BasicListCrud : IBasicCrudLogic<T>
+        private class BasicListCrud : IBasicCrudLogic<TItem>
         {
-            private readonly List<T> _source;
+            private readonly List<TItem> _source;
             
             private readonly Func<Task> _stateChangeSignal;
 
-            public BasicListCrud(List<T> source, Func<Task> stateChangeSignal)
+            public BasicListCrud(List<TItem> source, Func<Task> stateChangeSignal)
             {
                 _source = source;
                 _stateChangeSignal = stateChangeSignal;
             }
 
-            public async Task<IEnumerable<T>> GetAll()
+            public async Task<IEnumerable<TItem>> GetAll()
             {
                 return _source;
             }
 
-            public async Task<T> Get(Guid id)
+            public async Task<TItem> Get(Guid id)
             {
                 return _source.FirstOrDefault(x => x.Id == id);
             }
 
-            public async Task<T> Save(T instance)
+            public async Task<TItem> Save(TItem instance)
             {
                 _source.Add(instance);
 
@@ -57,7 +63,7 @@ namespace Logic.Abstracts
                 return instance;
             }
 
-            public async Task<T> Delete(Guid id)
+            public async Task<TItem> Delete(Guid id)
             {
                 var item = await Get(id);
 
@@ -71,7 +77,7 @@ namespace Logic.Abstracts
                 return item;
             }
 
-            public async Task<T> Update(Guid id, T dto)
+            public async Task<TItem> Update(Guid id, TItem dto)
             {
                 var item = await Get(id);
 

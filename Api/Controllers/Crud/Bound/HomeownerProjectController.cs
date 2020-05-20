@@ -11,23 +11,23 @@ using Models.Enums;
 
 namespace Api.Controllers.Crud.Bound
 {
-    [RoleAuthorize(RoleEnum.Contractor)]
+    [RoleAuthorize(RoleEnum.Homeowner)]
     [Route("Api/[controller]")]
-    public class ProjectMilestoneBoundController : BasicCrudBoundController<ProjectMilestone>
+    public class HomeownerProjectController : BasicCrudBoundController<HomeownerProject>
     {
-        private readonly IProjectMilestoneBoundLogic _projectMilestoneBoundLogic;
+        private readonly IHomeownerProjectBoundLogic _homeownerProjectBoundLogic;
 
         private readonly UserManager<User> _userManager;
 
-        public ProjectMilestoneBoundController(IProjectMilestoneBoundLogic projectMilestoneBoundLogic, UserManager<User> userManager)
+        public HomeownerProjectController(IHomeownerProjectBoundLogic homeownerProjectBoundLogic, UserManager<User> userManager)
         {
-            _projectMilestoneBoundLogic = projectMilestoneBoundLogic;
+            _homeownerProjectBoundLogic = homeownerProjectBoundLogic;
             _userManager = userManager;
         }
 
-        protected override IBasicCrudBoundLogic<ProjectMilestone> BasicCrudUserBoundLogic()
+        protected override IBasicCrudBoundLogic<HomeownerProject> BasicCrudUserBoundLogic()
         {
-            return _projectMilestoneBoundLogic;
+            return _homeownerProjectBoundLogic;
         }
 
         protected override UserManager<User> UserManager()
