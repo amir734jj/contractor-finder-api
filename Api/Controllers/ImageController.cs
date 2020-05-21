@@ -36,6 +36,7 @@ namespace Api.Controllers
             return Ok(response);
         }
         
+        [AllowAnonymous]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> DownloadImage([FromRoute] Guid id)
