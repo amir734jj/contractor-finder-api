@@ -10,7 +10,7 @@ namespace Models.Entities.Projects
 
         public string Description { get; set; }
 
-        public List<ProjectPhoto> ProjectPhotos { get; set; } = new List<ProjectPhoto>();
+        public List<DescriptivePhoto> ProjectPhotos { get; set; } = new List<DescriptivePhoto>();
 
         public Contractor Contractor { get; set; }
     }

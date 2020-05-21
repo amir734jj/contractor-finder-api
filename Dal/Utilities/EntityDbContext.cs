@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Models.Entities.Common;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 using Models.Entities.Internals;
@@ -10,6 +11,8 @@ namespace Dal.Utilities
 {
     public sealed class EntityDbContext: IdentityDbContext<User, UserRole, Guid>
     {
+        public DbSet<DescriptivePhoto> DescriptivePhotos { get; set; }
+        
         public DbSet<Contractor> Contractors { get; set; }
 
         public DbSet<Homeowner> Homeowners { get; set; }

@@ -26,7 +26,7 @@ namespace Api.Controllers
         [Consumes("multipart/form-data")] 
         public async Task<IActionResult> ImageUpload([FromForm] MultipartFormData<FileUploadViewModel> fileUploadViewModel)
         {
-            if (fileUploadViewModel == null)
+            if (fileUploadViewModel?.File == null)
             {
                 return BadRequest("Failed to upload file");
             }

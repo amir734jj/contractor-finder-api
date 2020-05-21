@@ -41,6 +41,7 @@ namespace Dal.Crud
         protected override IQueryable<User> Intercept<TQueryable>(TQueryable queryable)
         {
             return queryable
+                .Include(x => x.PhotoRef)
                 .Include(x => x.ContractorRef)
                 .Include(x => x.HomeownerRef)
                 .Include(x => x.InternalUserRef);
@@ -51,6 +52,7 @@ namespace Dal.Crud
             entity.Description = dto.Description;
             entity.Name = dto.Name;
             entity.PhoneNumber = dto.PhoneNumber;
+            entity.PhotoKey = dto.PhotoKey;
         }
     }
 }

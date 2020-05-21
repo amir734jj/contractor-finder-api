@@ -1,4 +1,5 @@
 using System;
+using Models.Entities.Common;
 using Models.Entities.Contractors;
 using Models.Entities.Homeowners;
 using Models.Entities.Internals;
@@ -19,7 +20,7 @@ namespace Models.ViewModels
 
         public RoleEnum Role { get; set; }
 
-        public Guid? Photo { get; set; }
+        public string Photo { get; set; }
         
         public Contractor Contractor { get; set; }
         
@@ -38,7 +39,7 @@ namespace Models.ViewModels
             Role = user.Role;
             PhoneNumber = user.PhoneNumber;
             Description = user.Description;
-            // Photo = user.Photo;
+            Photo = user.PhotoRef?.Key.ToString();
 
             Contractor = user.ContractorRef;
             InternalUser = user.InternalUserRef;

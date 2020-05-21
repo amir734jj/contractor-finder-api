@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Api.Configs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -99,7 +100,8 @@ namespace Api.Controllers
                 return Ok("Successfully registered!");
             }
 
-            return BadRequest("Failed to register!");
+            return BadRequest(new ErrorViewModel(new[] {"Failed to register!"}
+                .Concat(identityResults.SelectMany(x => x.Errors.Select(y => y.Description))).ToArray()));
         }
 
         [HttpPost]
@@ -112,41 +114,18 @@ namespace Api.Controllers
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginViewModel.Password))
             {
-                return BadRequest(new
-                {
-                    error = "", // OpenIdConnectConstants.Errors.InvalidGrant,
-                    error_description = "The username or password is invalid."
-                });
+                return BadRequest(new ErrorViewModel("The username or password is invalid."));
             }
 
             await _signManager.SignInAsync(user, true);
 
-            // Generate and issue a JWT token
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Value.Key));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var expires = DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenDurationInMinutes);
-            
-            var token = new JwtSecurityToken(
-                _jwtSettings.Value.Issuer,
-                _jwtSettings.Value.Issuer,
-                claims,
-                expires: expires,
-                signingCredentials: credentials);
-
             var userRoleInfo = await _userManager.GetRolesAsync(user);
+            
+            var (token, expires) = ResolveToken(user);
   
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
+                token,
                 roles = userRoleInfo,
                 user.Role,
                 user.Name,
@@ -163,6 +142,58 @@ namespace Api.Controllers
             await _signManager.SignOutAsync();
 
             return Ok("Logged-Out");
+        }
+        
+        [Authorize]
+        [HttpGet]
+        [Route("Refresh")]
+        [SwaggerOperation("Refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+                
+            var (token, expires) = ResolveToken(user);
+
+            return Ok(new
+            {
+                token,
+                user.Name,
+                user.Email,
+                expires
+            });
+        }
+        
+        /// <summary>
+        ///     Resolves a token given a user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private (string, DateTime) ResolveToken(User user)
+        {
+            // Generate and issue a JWT token
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Email),    // use email as name
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Value.Key));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            
+            var expires = DateTime.Now.AddMinutes(_jwtSettings.Value.AccessTokenDurationInMinutes);
+
+            var token = new JwtSecurityToken(
+                _jwtSettings.Value.Issuer,
+                _jwtSettings.Value.Issuer,
+                claims,
+                expires: expires,
+                signingCredentials: credentials);
+
+            return (new JwtSecurityTokenHandler().WriteToken(token), expires);
         }
     }
 }

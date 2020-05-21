@@ -18,6 +18,6 @@ namespace Models.Entities.Projects
 
         public Homeowner Homeowner { get; set; }
 
-        public List<ProjectPhoto> ProjectPhotos { get; set; } = new List<ProjectPhoto>();
+        public List<DescriptivePhoto> ProjectPhotos { get; set; } = new List<DescriptivePhoto>();
     }
 }

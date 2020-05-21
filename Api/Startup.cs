@@ -11,10 +11,11 @@ using Api.Extensions;
 using Api.Middleware;
 using Dal.Configs;
 using Dal.Interfaces;
-using Dal.Services.InMemory;
+using Dal.Services.LiteDb;
 using Dal.Utilities;
 using EFCache;
 using EFCache.Redis;
+using LiteDB;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -234,7 +235,8 @@ namespace Api
 
                 if (_env.IsDevelopment())
                 {
-                    config.For<IFileService>().Use<InMemoryFileService>().Singleton();
+                    config.For<ILiteDatabase>().Use("LiteDatabase", () => new LiteDatabase("local.lite.db"));
+                    config.For<IFileService>().Use<LiteDbFileService>().Singleton();
                 }
                 else
                 {
