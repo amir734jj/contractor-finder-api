@@ -8,7 +8,9 @@ namespace Dal.Schema
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasOne(x => x.PhotoRef);
+            builder.HasOne(x => x.PhotoRef)
+                .WithOne()
+                .HasForeignKey<User>(x => x.PhotoKey);
         }
     }
 }

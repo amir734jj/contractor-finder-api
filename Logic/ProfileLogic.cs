@@ -32,6 +32,11 @@ namespace Logic
 
                 user.PhotoKey = photo.Id;
             }
+            else if (user.PhotoKey != null)
+            {
+                await _descriptivePhotoLogic.Delete(user.PhotoKey.Value);
+                user.PhotoKey = null;
+            }
 
             await _userLogic.Update(user.Id, user);
         }
