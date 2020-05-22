@@ -1,14 +1,18 @@
 using System.Threading.Tasks;
 using Api.Abstracts;
+using Api.Attributes;
 using Logic.Interfaces;
 using Logic.Interfaces.Basic;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Homeowners;
+using Models.Entities.Users;
+using Models.Enums;
 
 namespace Api.Controllers.Crud.Basic
 {
-    [Authorize]
+    [RoleAuthorize(RoleEnum.Internal)]
     [Route("Api/[controller]")]
     public class HomeownerController : BasicCrudController<Homeowner>
     {

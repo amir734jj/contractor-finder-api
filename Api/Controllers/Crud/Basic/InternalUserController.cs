@@ -1,14 +1,16 @@
 using System.Threading.Tasks;
 using Api.Abstracts;
+using Api.Attributes;
 using Logic.Interfaces;
 using Logic.Interfaces.Basic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities.Internals;
+using Models.Enums;
 
 namespace Api.Controllers.Crud.Basic
 {
-    [Authorize]
+    [RoleAuthorize(RoleEnum.Internal)]
     [ApiController]
     [Route("Api/[controller]")]
     public class InternalUserController : BasicCrudController<InternalUser>
