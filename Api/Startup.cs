@@ -188,7 +188,6 @@ namespace Api
                 .AddNewtonsoftJson(option =>
                 {
                     option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    option.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
 
             services.Configure<ForwardedHeadersOptions>(options =>
